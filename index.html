@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Life in Cars</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --bg: #ffffff; --paper: #f7f8fa; --field: #eef1f4; --bay-1: #eceff2; --bay-2: #f7f8f9;
+    --ink: #111722; --ink-2: #1b2330; --muted: #6b7280; --muted-2: #9aa1ab;
+    --line: #e5e7eb; --line-2: #d8dce1;
+    --navy: #121a2a; --navy-h: #1d2840; --blue: #3457d5; --blue-soft: #eef1fc;
+    --green: #2f9e6f; --danger: #c0473c;
+    --display: 'Poppins', sans-serif; --body: 'Inter', sans-serif;
+    --atrium: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAwIDkwMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQgc2xpY2UiPgoKPGRlZnM+CiA8bGluZWFyR3JhZGllbnQgaWQ9InNreSIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPgogICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNlYWYyZmIiLz48c3RvcCBvZmZzZXQ9IjAuNCIgc3RvcC1jb2xvcj0iI2Y0ZjdmYiIvPgogICA8c3RvcCBvZmZzZXQ9IjAuNzIiIHN0b3AtY29sb3I9IiNmYmZjZmUiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNlZWYxZjYiLz4KIDwvbGluZWFyR3JhZGllbnQ+CiA8cmFkaWFsR3JhZGllbnQgaWQ9Imdsb3ciIGN4PSI1MiUiIGN5PSIwJSIgcj0iNTUlIj4KICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmZmZmIiBzdG9wLW9wYWNpdHk9IjAuOTUiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMCIvPgogPC9yYWRpYWxHcmFkaWVudD4KIDxsaW5lYXJHcmFkaWVudCBpZD0iYmFuZCIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPgogICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZmZmZmYiLz48c3RvcCBvZmZzZXQ9IjAuNDUiIHN0b3AtY29sb3I9IiNmMmY1ZjkiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNkM2RhZTMiLz4KIDwvbGluZWFyR3JhZGllbnQ+CiA8bGluZWFyR3JhZGllbnQgaWQ9ImNvbCIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjAiPgogICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZmZmZmYiLz48c3RvcCBvZmZzZXQ9IjAuNSIgc3RvcC1jb2xvcj0iI2VlZjFmNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2NmZDZkZiIvPgogPC9saW5lYXJHcmFkaWVudD4KIDxsaW5lYXJHcmFkaWVudCBpZD0id29vZCIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPgogICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNkNmIxODciLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNiOThlNWYiLz4KIDwvbGluZWFyR3JhZGllbnQ+CiA8bGluZWFyR3JhZGllbnQgaWQ9ImZsb29yIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+CiAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2U5ZWRmMyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2RkZTNlYyIvPgogPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8cmVjdCB3aWR0aD0iMTYwMCIgaGVpZ2h0PSI5MDAiIGZpbGw9InVybCgjc2t5KSIvPgo8cmVjdCB3aWR0aD0iMTYwMCIgaGVpZ2h0PSI1MjAiIGZpbGw9InVybCgjZ2xvdykiLz4KPHBhdGggZD0iTSAtNjIwLDQ5MCBBIDE1MDAsNjQwIDAgMCAwIDIzODAsNDkwIEwgMjM4MCw1MjQgQSAxNTAwLDY0MCAwIDAgMSAtNjIwLDUyNCBaIiBmaWxsPSJ1cmwoI2JhbmQpIiBzdHJva2U9IiNjNWNkZDgiIHN0cm9rZS13aWR0aD0iMSIvPjxwYXRoIGQ9Ik0gLTYyMCw1MjQgQSAxNTAwLDY0MCAwIDAgMCAyMzgwLDUyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDcwLDg2LDEwOCwwLjEwKSIgc3Ryb2tlLXdpZHRoPSI2Ii8+PHBhdGggZD0iTSAtMzUwLDM3MCBBIDEyMzAsNTIwIDAgMCAwIDIxMTAsMzcwIEwgMjExMCw0MDQgQSAxMjMwLDUyMCAwIDAgMSAtMzUwLDQwNCBaIiBmaWxsPSJ1cmwoI2JhbmQpIiBzdHJva2U9IiNjNWNkZDgiIHN0cm9rZS13aWR0aD0iMSIvPjxwYXRoIGQ9Ik0gLTM1MCw0MDQgQSAxMjMwLDUyMCAwIDAgMCAyMTEwLDQwNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDcwLDg2LDEwOCwwLjEwKSIgc3Ryb2tlLXdpZHRoPSI2Ii8+PHBhdGggZD0iTSAtMTAwLDI2MCBBIDk4MCw0MTAgMCAwIDAgMTg2MCwyNjAgTCAxODYwLDI5NCBBIDk4MCw0MTAgMCAwIDEgLTEwMCwyOTQgWiIgZmlsbD0idXJsKCNiYW5kKSIgc3Ryb2tlPSIjYzVjZGQ4IiBzdHJva2Utd2lkdGg9IjEiLz48cGF0aCBkPSJNIC0xMDAsMjk0IEEgOTgwLDQxMCAwIDAgMCAxODYwLDI5NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDcwLDg2LDEwOCwwLjEwKSIgc3Ryb2tlLXdpZHRoPSI2Ii8+PHBhdGggZD0iTSAxNDAsMTUwIEEgNzQwLDMwMCAwIDAgMCAxNjIwLDE1MCBMIDE2MjAsMTg0IEEgNzQwLDMwMCAwIDAgMSAxNDAsMTg0IFoiIGZpbGw9InVybCgjYmFuZCkiIHN0cm9rZT0iI2M1Y2RkOCIgc3Ryb2tlLXdpZHRoPSIxIi8+PHBhdGggZD0iTSAxNDAsMTg0IEEgNzQwLDMwMCAwIDAgMCAxNjIwLDE4NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDcwLDg2LDEwOCwwLjEwKSIgc3Ryb2tlLXdpZHRoPSI2Ii8+CjxyZWN0IHg9IjEyMCIgeT0iNDAyIiB3aWR0aD0iMzAiIGhlaWdodD0iMzcyIiByeD0iNSIgZmlsbD0idXJsKCNjb2wpIi8+PHJlY3QgeD0iMTIwIiB5PSI0MDIiIHdpZHRoPSIzMCIgaGVpZ2h0PSIxNCIgZmlsbD0iI2RmZTRlYSIvPjxyZWN0IHg9IjM2MCIgeT0iNDAyIiB3aWR0aD0iMzAiIGhlaWdodD0iMzcyIiByeD0iNSIgZmlsbD0idXJsKCNjb2wpIi8+PHJlY3QgeD0iMzYwIiB5PSI0MDIiIHdpZHRoPSIzMCIgaGVpZ2h0PSIxNCIgZmlsbD0iI2RmZTRlYSIvPjxyZWN0IHg9IjEyNDAiIHk9IjQwMiIgd2lkdGg9IjMwIiBoZWlnaHQ9IjM3MiIgcng9IjUiIGZpbGw9InVybCgjY29sKSIvPjxyZWN0IHg9IjEyNDAiIHk9IjQwMiIgd2lkdGg9IjMwIiBoZWlnaHQ9IjE0IiBmaWxsPSIjZGZlNGVhIi8+PHJlY3QgeD0iMTQ4MCIgeT0iNDAyIiB3aWR0aD0iMzAiIGhlaWdodD0iMzcyIiByeD0iNSIgZmlsbD0idXJsKCNjb2wpIi8+PHJlY3QgeD0iMTQ4MCIgeT0iNDAyIiB3aWR0aD0iMzAiIGhlaWdodD0iMTQiIGZpbGw9IiNkZmU0ZWEiLz4KPHBhdGggZD0iTSAxMTgwLDQ3MCBRIDE0NzAsNTAwIDE1MDAsNjkwIEwgMTUwMCw3NjAgUSAxNDMwLDU2MCAxMTUwLDU0MCBaIiBmaWxsPSJ1cmwoI3dvb2QpIiBvcGFjaXR5PSIwLjk1Ii8+PHBhdGggZD0iTSAxMTgwLDQ3MCBRIDE0NzAsNTAwIDE1MDAsNjkwIiBmaWxsPSJub25lIiBzdHJva2U9IiNhODdiNGUiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMC41Ii8+CjxyZWN0IHk9IjcwMCIgd2lkdGg9IjE2MDAiIGhlaWdodD0iMjAwIiBmaWxsPSJ1cmwoI2Zsb29yKSIvPjxyZWN0IHg9IjI0MCIgeT0iNzAwIiB3aWR0aD0iNjAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjEwIi8+PHJlY3QgeD0iNTYwIiB5PSI3MDAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNmZmZmZmYiIG9wYWNpdHk9IjAuMTAiLz48cmVjdCB4PSI4ODAiIHk9IjcwMCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4xMCIvPjxyZWN0IHg9IjExODAiIHk9IjcwMCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4xMCIvPjxlbGxpcHNlIGN4PSI4MDAiIGN5PSI3MDQiIHJ4PSIxMzAwIiByeT0iMTQiIGZpbGw9IiNmZmZmZmYiIG9wYWNpdHk9IjAuNTUiLz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMzYwLDY5MCkgc2NhbGUoMS4wKSI+PGVsbGlwc2UgY3g9IjAiIGN5PSIzNiIgcng9IjEyMCIgcnk9IjEyIiBmaWxsPSJyZ2JhKDYwLDcyLDkwLDAuMTApIi8+PHBhdGggZD0iTSAtMTEwLDE4IFEgLTEwNCwtMiAtNzgsLTYgTCAtMzQsLTI2IFEgLTIwLC0zMiA0LC0zMiBMIDQ0LC0zMCBRIDY0LC0yNiA3OCwtOCBMIDExMCwyIFEgMTE4LDYgMTE4LDE4IEwgMTE4LDI4IEwgLTExMCwyOCBaIiBmaWxsPSIjY2ZkNmRmIi8+PGNpcmNsZSBjeD0iLTY2IiBjeT0iMjgiIHI9IjE3IiBmaWxsPSIjYWViNmMxIi8+PGNpcmNsZSBjeD0iNzQiIGN5PSIyOCIgcj0iMTciIGZpbGw9IiNhZWI2YzEiLz48L2c+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoODIwLDY5MCkgc2NhbGUoMS4xNSkiPjxlbGxpcHNlIGN4PSIwIiBjeT0iMzYiIHJ4PSIxMjAiIHJ5PSIxMiIgZmlsbD0icmdiYSg2MCw3Miw5MCwwLjEwKSIvPjxwYXRoIGQ9Ik0gLTExMCwxOCBRIC0xMDQsLTIgLTc4LC02IEwgLTM0LC0yNiBRIC0yMCwtMzIgNCwtMzIgTCA0NCwtMzAgUSA2NCwtMjYgNzgsLTggTCAxMTAsMiBRIDExOCw2IDExOCwxOCBMIDExOCwyOCBMIC0xMTAsMjggWiIgZmlsbD0iI2RkZTNlYSIvPjxjaXJjbGUgY3g9Ii02NiIgY3k9IjI4IiByPSIxNyIgZmlsbD0iI2FlYjZjMSIvPjxjaXJjbGUgY3g9Ijc0IiBjeT0iMjgiIHI9IjE3IiBmaWxsPSIjYWViNmMxIi8+PC9nPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDExODAsNjkwKSBzY2FsZSgwLjkpIj48ZWxsaXBzZSBjeD0iMCIgY3k9IjM2IiByeD0iMTIwIiByeT0iMTIiIGZpbGw9InJnYmEoNjAsNzIsOTAsMC4xMCkiLz48cGF0aCBkPSJNIC0xMTAsMTggUSAtMTA0LC0yIC03OCwtNiBMIC0zNCwtMjYgUSAtMjAsLTMyIDQsLTMyIEwgNDQsLTMwIFEgNjQsLTI2IDc4LC04IEwgMTEwLDIgUSAxMTgsNiAxMTgsMTggTCAxMTgsMjggTCAtMTEwLDI4IFoiIGZpbGw9IiNkNGRiZTMiLz48Y2lyY2xlIGN4PSItNjYiIGN5PSIyOCIgcj0iMTciIGZpbGw9IiNhZWI2YzEiLz48Y2lyY2xlIGN4PSI3NCIgY3k9IjI4IiByPSIxNyIgZmlsbD0iI2FlYjZjMSIvPjwvZz4KPHJlY3QgeD0iNjkwIiB5PSI2MTIiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxMjAiIHJ4PSI2IiBmaWxsPSIjYjQ4YTVmIi8+PGVsbGlwc2UgY3g9IjY5NyIgY3k9IjczMCIgcng9Ijg2IiByeT0iMTQiIGZpbGw9InJnYmEoNjAsNzIsOTAsMC4wOCkiLz48Y2lyY2xlIGN4PSI2OTciIGN5PSI1NjAiIHI9IjY0IiBmaWxsPSIjOWNiZjljIi8+PGNpcmNsZSBjeD0iNjU0IiBjeT0iNTkyIiByPSI0OCIgZmlsbD0iIzhiYjM4OSIvPjxjaXJjbGUgY3g9Ijc0MCIgY3k9IjU5MiIgcj0iNTAiIGZpbGw9IiNhYmNjYWEiLz48Y2lyY2xlIGN4PSI2OTciIGN5PSI2MDYiIHI9IjUyIiBmaWxsPSIjOTRiZDk0Ii8+Cjwvc3ZnPg==");
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--body); color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased; line-height: 1.55; min-height: 100vh; }
+  .hidden { display: none !important; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
+  button { font-family: inherit; }
+
+  /* ---------- Top nav ---------- */
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; border-bottom: 1px solid var(--line); background: rgba(255,255,255,0.9); backdrop-filter: blur(8px); position: relative; z-index: 10; }
+  .brand { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .brand svg { color: var(--ink); }
+  .brand b { font-family: var(--display); font-weight: 600; font-size: 18px; letter-spacing: -0.01em; }
+  .nav-right { display: flex; align-items: center; gap: 16px; font-size: 14px; color: var(--muted); }
+  .nav-right .user { color: var(--ink); }
+  .logout { color: var(--muted); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; background: none; border: none; }
+  .logout:hover { color: var(--ink); }
+  .navlink { color: var(--muted); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; background: none; border: none; display: inline-flex; align-items: center; gap: 6px; }
+  .navlink:hover { color: var(--ink); }
+
+  /* ---------- Buttons ---------- */
+  .btn { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 8px; padding: 12px 18px; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; display: inline-flex; align-items: center; gap: 9px; }
+  .btn-dark { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .btn-dark:hover { background: var(--navy-h); }
+  .btn-outline { background: #fff; color: var(--ink); border-color: var(--line-2); }
+  .btn-outline:hover { border-color: var(--ink); }
+  .btn-light { background: var(--field); color: var(--ink); border: 1px solid var(--line); }
+  .btn-light:hover { background: #e6e9ee; }
+
+  /* ---------- Auth / Garage Access ---------- */
+  .auth-page { min-height: 100vh; display: flex; flex-direction: column; }
+  .auth-bg { flex: 1; position: relative; display: grid; place-items: start center; padding: 56px 24px;
+    background: linear-gradient(rgba(255,255,255,0.18), rgba(255,255,255,0.40)), var(--atrium); background-size: cover; background-position: center 32%; }
+  .auth-card { width: 100%; max-width: 420px; background: #fff; border-radius: 14px; padding: 40px 38px; box-shadow: 0 30px 80px -30px rgba(20,26,42,0.4); }
+  .auth-card h1 { font-family: var(--display); font-weight: 700; font-size: 30px; text-align: center; letter-spacing: -0.01em; }
+  .auth-card .tag { text-align: center; color: var(--muted); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; margin-top: 8px; margin-bottom: 28px; }
+  .tabs { display: flex; gap: 26px; border-bottom: 1px solid var(--line); margin-bottom: 26px; }
+  .tab { background: none; border: none; padding: 0 0 12px; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-2); cursor: pointer; position: relative; font-weight: 600; }
+  .tab.active { color: var(--ink); }
+  .tab.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--ink); }
+  label { display: block; font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin: 0 0 8px; font-weight: 600; }
+  .fieldwrap { margin-bottom: 18px; }
+  input, select, textarea { width: 100%; font-family: var(--body); font-size: 15px; color: var(--ink); background: var(--field); border: 1px solid transparent; border-radius: 8px; padding: 12px 14px; transition: all 0.15s; }
+  input::placeholder, textarea::placeholder { color: var(--muted-2); }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--ink); background: #fff; }
+  select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%236b7280' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 32px; }
+  textarea { resize: vertical; min-height: 84px; line-height: 1.5; }
+  .auth-card .btn-dark { margin-top: 8px; }
+  .auth-foot { text-align: center; margin-top: 16px; font-size: 13px; color: var(--muted); }
+  .auth-foot a { color: var(--ink); cursor: pointer; font-weight: 500; }
+  .err { color: var(--danger); font-size: 13px; margin-top: 12px; min-height: 18px; }
+  .err.ok { color: var(--green); }
+
+  /* ---------- Collection ---------- */
+  .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding: 44px 0 26px; }
+  .page-head h2 { font-family: var(--display); font-weight: 700; font-size: clamp(30px, 4.4vw, 46px); letter-spacing: -0.02em; line-height: 1; }
+  .page-head .sub { color: var(--muted); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; margin-top: 12px; }
+  .head-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+  .band { height: 260px; background: linear-gradient(rgba(255,255,255,0.28), rgba(255,255,255,0.52)), var(--atrium); background-size: cover; background-position: center 30%; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 26px; padding: 34px 0 90px; }
+
+  .vcard { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; transition: box-shadow 0.2s, transform 0.2s; }
+  .vcard:hover { box-shadow: 0 24px 44px -28px rgba(20,26,42,0.4); transform: translateY(-3px); }
+  .vphoto { position: relative; height: 200px; display: grid; place-items: center; background: linear-gradient(160deg, var(--bay-1), var(--bay-2)); overflow: hidden; }
+  .vphoto .car-photo { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; }
+  .vphoto .illus { display: none; width: 90%; }
+  .vphoto .car-photo.failed { display: none; }
+  .vphoto .car-photo.failed + .illus { display: block; }
+  body.mode-illus .vphoto .car-photo { display: none; }
+  body.mode-illus .vphoto .illus { display: block; }
+  .vphoto .angles { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); z-index: 2; display: flex; gap: 6px; }
+  body.mode-illus .vphoto .angles { display: none; }
+  .vphoto .angles .thumb { width: 44px; height: 30px; object-fit: contain; background: #fff; border: 1px solid var(--line); border-radius: 6px; cursor: pointer; padding: 2px; opacity: 0.92; transition: all 0.15s; }
+  .vphoto .angles .thumb:hover { opacity: 1; border-color: var(--ink); }
+  .pencil { position: absolute; top: 12px; right: 12px; z-index: 3; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.92); border: 1px solid var(--line); display: grid; place-items: center; cursor: pointer; color: var(--muted); box-shadow: 0 2px 8px rgba(20,26,42,0.12); }
+  .pencil:hover { color: var(--ink); }
+  .trash { position: absolute; top: 12px; right: 54px; z-index: 3; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.92); border: 1px solid var(--line); display: grid; place-items: center; cursor: pointer; color: var(--muted); opacity: 0; transition: opacity 0.18s; box-shadow: 0 2px 8px rgba(20,26,42,0.12); }
+  .vcard:hover .trash { opacity: 1; }
+  .trash:hover { color: var(--danger); border-color: var(--danger); }
+  .vis { position: absolute; top: 12px; left: 12px; z-index: 3; display: inline-flex; align-items: center; gap: 7px; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; color: var(--muted); background: rgba(255,255,255,0.92); border: 1px solid var(--line); padding: 6px 10px; border-radius: 20px; cursor: pointer; }
+  .vis .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted-2); }
+  .vis.pub { color: var(--green); }
+  .vis.pub .dot { background: var(--green); }
+  .vis:hover { border-color: var(--ink); }
+
+  .vbody { padding: 20px 22px 22px; display: flex; flex-direction: column; flex: 1; }
+  .vtop { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .vname { font-family: var(--display); font-weight: 600; font-size: 19px; letter-spacing: -0.01em; line-height: 1.2; }
+  .vtype { flex: none; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); background: var(--field); border-radius: 16px; padding: 5px 11px; }
+  .vsub { color: var(--muted); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 6px; }
+  .vdata { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 18px 0 0; padding: 16px 0 0; border-top: 1px solid var(--line); }
+  .vdata .k { font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-2); font-weight: 600; }
+  .vdata .v { font-size: 14px; font-weight: 600; color: var(--ink); margin-top: 4px; }
+  .vdesc { color: var(--muted); font-size: 13.5px; margin-top: 16px; }
+  .vnote { margin-top: 14px; background: var(--paper); border-left: 3px solid var(--blue); border-radius: 0 8px 8px 0; padding: 12px 14px; font-size: 14px; font-style: italic; color: var(--ink-2); }
+
+  .empty { grid-column: 1/-1; text-align: center; padding: 80px 20px; }
+  .empty svg { color: var(--line-2); }
+  .empty h3 { font-family: var(--display); font-weight: 600; font-size: 20px; margin: 18px 0 6px; color: var(--ink); }
+  .empty p { color: var(--muted); }
+  .loading { grid-column: 1/-1; text-align: center; color: var(--muted); padding: 70px; font-size: 15px; }
+
+  /* ---------- Virtual Showroom (timeline) ---------- */
+  .show-page { min-height: 100vh; background: linear-gradient(rgba(255,255,255,0.26), rgba(255,255,255,0.46)), var(--atrium); background-size: cover; background-position: center; background-attachment: fixed; }
+  .show-nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 28px; }
+  .show-nav .title { font-family: var(--display); font-weight: 600; font-size: 18px; }
+  .timeline-scroll { overflow-x: auto; padding: 40px 28px 60px; }
+  .timeline { display: inline-flex; align-items: flex-end; gap: 34px; min-width: 100%; padding-bottom: 30px; position: relative; }
+  .timeline::after { content: ""; position: absolute; left: 0; right: 0; bottom: 14px; height: 1px; background: rgba(20,26,42,0.18); }
+  .tcar { width: 280px; flex: none; text-align: center; position: relative; }
+  .tcar .frame { background: rgba(255,255,255,0.86); border: 1px solid var(--line); border-radius: 12px; padding: 14px; box-shadow: 0 16px 30px -20px rgba(20,26,42,0.4); }
+  .tcar .frame .car-photo { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; }
+  .tcar .frame .illus { display: none; }
+  body.mode-illus .tcar .frame .car-photo { display: none; }
+  body.mode-illus .tcar .frame .illus { display: block; }
+  .tcar .cap { margin-top: 10px; font-size: 13px; color: var(--ink); font-weight: 500; }
+  .tcar .yr { font-family: var(--display); font-weight: 700; font-size: 22px; margin-top: 14px; color: var(--ink); position: relative; }
+  .tcar .yr::before { content: ""; position: absolute; left: 50%; bottom: -16px; width: 9px; height: 9px; border-radius: 50%; background: var(--navy); transform: translateX(-50%); border: 2px solid #fff; }
+
+  /* ---------- Modal ---------- */
+  .modal-bg { position: fixed; inset: 0; background: rgba(17,23,34,0.4); backdrop-filter: blur(5px); z-index: 60; display: grid; place-items: center; padding: 24px; }
+  .modal { width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; background: #fff; border-radius: 16px; box-shadow: 0 40px 100px -30px rgba(17,23,34,0.6); }
+  .modal-head { display: flex; align-items: center; justify-content: space-between; padding: 24px 28px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: #fff; z-index: 2; }
+  .modal-head h2 { font-family: var(--display); font-weight: 600; font-size: 21px; }
+  .x { width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 8px; background: #fff; display: grid; place-items: center; cursor: pointer; color: var(--muted); }
+  .x:hover { color: var(--ink); border-color: var(--ink); }
+  .modal-body { padding: 24px 28px 28px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 560px) { .row2 { grid-template-columns: 1fr; } }
+  .colorline { display: flex; align-items: center; gap: 10px; }
+  .colorline input { flex: 1; }
+  .colorchip { width: 30px; height: 30px; border-radius: 7px; border: 1px solid var(--line-2); flex: none; }
+  .charcount { font-size: 11px; color: var(--muted-2); float: right; font-weight: 400; text-transform: none; letter-spacing: 0; }
+  .seg { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .sg { flex: 1; background: #fff; border: none; padding: 11px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .sg .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted-2); }
+  .sg.active { background: var(--field); color: var(--ink); }
+  .sg.active[data-v="public"] .dot { background: var(--green); }
+  .sg.active[data-v="private"] .dot { background: var(--navy); }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 26px; }
+
+  .toggle-mini { display: inline-flex; border: 1px solid var(--line-2); border-radius: 8px; overflow: hidden; }
+  .toggle-mini button { background: #fff; border: none; padding: 9px 12px; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); cursor: pointer; font-weight: 600; }
+  .toggle-mini button.active { background: var(--field); color: var(--ink); }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0; color: var(--muted-2); font-size: 12px; text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- ============ SETUP NOTICE ============ -->
+<div id="view-setup" class="hidden">
+  <div class="wrap" style="max-width:680px;margin-top:60px">
+    <div style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:38px">
+      <h2 style="font-family:var(--display);font-weight:700;font-size:26px">Connect your Supabase project</h2>
+      <p style="color:var(--muted);margin-top:10px">This file is missing its Supabase keys. Paste your Project URL and publishable key into the two lines marked <code>PASTE HERE</code> near the top of the script, then save and reopen.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ GARAGE ACCESS (login) ============ -->
+<div id="view-login" class="hidden">
+  <div class="auth-page">
+    <div class="wrap"><div class="nav"><div class="brand"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 13l2-5.2A2 2 0 0 1 6.9 6.5h10.2a2 2 0 0 1 1.9 1.3L21 13"/><path d="M4 13h16v4a1 1 0 0 1-1 1h-1.5a1 1 0 0 1-1-1v-1H7.5v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><circle cx="7.5" cy="14.4" r="1.1"/><circle cx="16.5" cy="14.4" r="1.1"/></svg><b>My Life in Cars</b></div></div></div>
+    <div class="auth-bg">
+      <div class="auth-card">
+        <h1>Garage Access</h1>
+        <div class="tag">Enter your digital showroom</div>
+        <div class="tabs">
+          <button class="tab active" id="tab-login" onclick="setAuthTab('login')">Login</button>
+          <button class="tab" id="tab-register" onclick="setAuthTab('register')">Register</button>
+        </div>
+        <div class="fieldwrap" id="nameWrap" style="display:none">
+          <label for="f-name">Display name</label>
+          <input id="f-name" type="text" placeholder="Gregor Petri" autocomplete="name" />
+        </div>
+        <div class="fieldwrap">
+          <label for="f-email">Email</label>
+          <input id="f-email" type="email" placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <div class="fieldwrap">
+          <label for="f-pass">Password</label>
+          <input id="f-pass" type="password" placeholder="at least 6 characters" autocomplete="current-password" />
+        </div>
+        <button class="btn btn-dark" style="width:100%;justify-content:center" id="authBtn" onclick="submitAuth()">Enter Garage</button>
+        <div class="err" id="authErr"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MY COLLECTION ============ -->
+<div id="view-collection" class="hidden">
+  <div class="wrap">
+    <div class="nav">
+      <div class="brand" onclick="goCollection()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 13l2-5.2A2 2 0 0 1 6.9 6.5h10.2a2 2 0 0 1 1.9 1.3L21 13"/><path d="M4 13h16v4a1 1 0 0 1-1 1h-1.5a1 1 0 0 1-1-1v-1H7.5v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><circle cx="7.5" cy="14.4" r="1.1"/><circle cx="16.5" cy="14.4" r="1.1"/></svg><b>My Life in Cars</b></div>
+      <div class="nav-right"><span class="user" id="userName">—</span><button class="logout" onclick="signOut()">Logout</button></div>
+    </div>
+    <div class="page-head">
+      <div><h2>My Collection</h2><div class="sub" id="collSub">A timeline of automotive excellence.</div></div>
+      <div class="head-actions">
+        <div class="toggle-mini"><button class="active" data-mode="photo" onclick="setMode('photo')">Photo</button><button data-mode="illus" onclick="setMode('illus')">Illustration</button></div>
+        <button class="btn btn-outline" onclick="openExplore()">Explore</button>
+        <button class="btn btn-outline" onclick="openShowroom()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-6h6v6"/></svg> View Showroom</button>
+        <button class="btn btn-dark" onclick="openModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg> Add Vehicle</button>
+      </div>
+    </div>
+  </div>
+  <div class="band"></div>
+  <div class="wrap"><div class="grid" id="grid"></div></div>
+  <footer>My Life in Cars — your collection, kept for good.</footer>
+</div>
+
+<!-- ============ VIRTUAL SHOWROOM ============ -->
+<div id="view-showroom" class="hidden">
+  <div class="show-page">
+    <div class="show-nav">
+      <button class="navlink" onclick="goCollection()">&larr; Back to dashboard</button>
+      <div class="title">Virtual Showroom</div>
+      <div class="toggle-mini"><button class="active" data-mode="photo" onclick="setMode('photo')">Photo</button><button data-mode="illus" onclick="setMode('illus')">Illustration</button></div>
+    </div>
+    <div class="timeline-scroll"><div class="timeline" id="timeline"></div></div>
+  </div>
+</div>
+
+<!-- ============ EXPLORE (public) ============ -->
+<div id="view-explore" class="hidden">
+  <div class="wrap">
+    <div class="nav">
+      <div class="brand" onclick="goCollection()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 13l2-5.2A2 2 0 0 1 6.9 6.5h10.2a2 2 0 0 1 1.9 1.3L21 13"/><path d="M4 13h16v4a1 1 0 0 1-1 1h-1.5a1 1 0 0 1-1-1v-1H7.5v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><circle cx="7.5" cy="14.4" r="1.1"/><circle cx="16.5" cy="14.4" r="1.1"/></svg><b>My Life in Cars</b></div>
+      <div class="nav-right"><div class="toggle-mini"><button class="active" data-mode="photo" onclick="setMode('photo')">Photo</button><button data-mode="illus" onclick="setMode('illus')">Illustration</button></div><button class="navlink" id="exploreBack" onclick="backFromExplore()">My collection</button></div>
+    </div>
+    <div class="page-head"><div><h2>Public Garages</h2><div class="sub">Collections others have chosen to share.</div></div></div>
+  </div>
+  <div class="band"></div>
+  <div class="wrap"><div class="grid" id="exploreGrid"></div></div>
+  <footer>My Life in Cars</footer>
+</div>
+
+<!-- ============ ADD / EDIT MODAL ============ -->
+<div id="modal" class="modal-bg hidden">
+  <div class="modal">
+    <div class="modal-head"><h2 id="modalTitle">Add New Vehicle</h2><button class="x" onclick="closeModal()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="modal-body">
+      <div class="row2">
+        <div class="fieldwrap"><label for="m-make">Make</label><input id="m-make" type="text" placeholder="e.g. Porsche" /></div>
+        <div class="fieldwrap"><label for="m-model">Model</label><input id="m-model" type="text" placeholder="e.g. 911 Carrera" /></div>
+      </div>
+      <div class="row2">
+        <div class="fieldwrap"><label for="m-type">Type</label>
+          <select id="m-type">
+            <option value="coupe">Coupe</option><option value="sedan">Sedan</option>
+            <option value="sports">Sports car</option><option value="suv">SUV</option>
+            <option value="hatchback">Hatchback</option><option value="convertible">Convertible</option>
+            <option value="wagon">Wagon / Estate</option><option value="pickup">Pickup</option><option value="van">Van / MPV</option>
+          </select>
+        </div>
+        <div class="fieldwrap"><label for="m-color">Color</label>
+          <div class="colorline"><input id="m-color" type="text" placeholder="e.g. Guards Red" oninput="syncColor()" /><span class="colorchip" id="colorChip"></span></div>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="fieldwrap"><label for="m-built">Year built</label><input id="m-built" type="text" placeholder="YYYY" oninput="syncColor()" /></div>
+        <div class="fieldwrap"><label for="m-bought">Year bought</label><input id="m-bought" type="text" placeholder="YYYY" /></div>
+      </div>
+      <div class="fieldwrap"><label for="m-sold">Year sold</label><input id="m-sold" type="text" placeholder="YYYY (leave empty if still owned)" /></div>
+      <div class="fieldwrap"><label for="m-desc">Description <span class="charcount" id="descCount">0 / 100</span></label><input id="m-desc" type="text" maxlength="100" placeholder="Brief summary…" oninput="document.getElementById('descCount').textContent=this.value.length+' / 100'" /></div>
+      <div class="fieldwrap"><label for="m-anec">Anecdote <span class="charcount" id="anecCount">0 / 600</span></label><textarea id="m-anec" maxlength="600" placeholder="Tell the story of this car…" oninput="document.getElementById('anecCount').textContent=this.value.length+' / 600'"></textarea></div>
+      <div class="fieldwrap"><label>Visibility</label>
+        <div class="seg"><button type="button" class="sg active" data-v="private" onclick="setVis('private')"><span class="dot"></span>Private</button><button type="button" class="sg" data-v="public" onclick="setVis('public')"><span class="dot"></span>Public</button></div>
+      </div>
+      <div class="err" id="modalErr"></div>
+      <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-dark" id="saveBtn" onclick="saveCar()">Add Vehicle</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== Supabase config (keys already filled in) ===== */
+const SUPABASE_URL = 'https://audsyrapfshsclqdtqlv.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_1h1hRLVQ2q8e8EtKLkifww__cgGVU28';
+const IMAGIN_KEY = 'img';
+
+const configured = !SUPABASE_URL.includes('PASTE HERE') && !SUPABASE_ANON_KEY.includes('PASTE HERE');
+let sb = null;
+if (configured) { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); }
+
+/* ===== Colour resolver (free text -> hex + paint word) ===== */
+function resolveColor(name) {
+  const n = (name || '').toLowerCase();
+  const has = (w) => n.indexOf(w) !== -1;
+  if (has('black') || has('obsidian') || has('onyx')) return { hex: '#1a1d22', paint: 'black' };
+  if (has('white') || has('pearl') || has('ivory') || has('snow')) return { hex: '#e7e9ec', paint: 'white' };
+  if (has('silver') || has('alumin') || has('platinum')) return { hex: '#c6ccd3', paint: 'silver' };
+  if (has('gunmetal') || has('graphite') || has('anthracite') || has('charcoal') || has('grey') || has('gray') || has('slate')) return { hex: '#6c727b', paint: 'grey' };
+  if (has('guards') || has('vermillion') || has('scarlet') || has('crimson') || has('red')) return { hex: '#c0392b', paint: 'red' };
+  if (has('maroon') || has('bordeaux') || has('burgundy') || has('wine')) return { hex: '#5e1f2a', paint: 'red' };
+  if (has('orange') || has('copper') || has('rust')) return { hex: '#cc5a1f', paint: 'orange' };
+  if (has('yellow') || has('gold') && !has('golden brown')) return { hex: '#e3ad0b', paint: 'yellow' };
+  if (has('green') || has('emerald') || has('olive') || has('racing')) return { hex: '#1f6f47', paint: 'green' };
+  if (has('navy') || has('cobalt') || has('blue') || has('azure')) return { hex: '#2b5fb0', paint: 'blue' };
+  if (has('purple') || has('violet') || has('plum')) return { hex: '#6b4f9e', paint: 'purple' };
+  if (has('beige') || has('sand') || has('cream') || has('champagne') || has('tan') || has('bronze')) return { hex: '#cbb487', paint: 'beige' };
+  if (has('brown') || has('chocolate') || has('coffee')) return { hex: '#6b4f2a', paint: 'brown' };
+  return { hex: '#8a8f98', paint: 'grey' };
+}
+
+/* ===== AI-generated car photos (Pollinations — free, no key, no blocking watermark) ===== */
+/* Each car is rendered fresh from a text prompt, so there's no third-party photo catalog
+   and no licensing/watermark issue. A stable seed keeps the same car looking consistent. */
+const ANGLE_VIEWS = [
+  { key: '23', phrase: 'front three-quarter view' },
+  { key: '29', phrase: 'rear three-quarter view' },
+  { key: '17', phrase: 'side profile view' },
+  { key: '21', phrase: 'rear view' },
+];
+const THUMB_ANGLES = ANGLE_VIEWS.map(a => a.key);
+function hashSeed(s) { let h = 2166136261; s = String(s); for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return Math.abs(h) % 100000; }
+function carPhotoUrl(car, angle) {
+  const view = ANGLE_VIEWS.find(a => a.key === angle) || ANGLE_VIEWS[0];
+  const color = (car.color_name || resolveColor(car.color_name).paint || '').trim();
+  const year = car.year ? car.year + ' ' : '';
+  const prompt = 'professional studio photograph of a ' + year + (car.make || '') + ' ' + (car.model || '') +
+    (color ? ', ' + color + ' paint' : '') + ', ' + view.phrase +
+    ', plain white seamless studio background, entire car centered and fully visible, sharp focus, automotive product photo';
+  const seed = hashSeed((car.id || ((car.make || '') + (car.model || '') + (car.year || ''))) + view.key);
+  const p = new URLSearchParams({ width: '640', height: '420', nologo: 'true', model: 'flux', seed: String(seed) });
+  return 'https://image.pollinations.ai/prompt/' + encodeURIComponent(prompt) + '?' + p.toString();
+}
+function swapPhoto(id, src) { const el = document.getElementById('ph-' + id); if (el) el.src = src; }
+
+/* ===== Illustration ===== */
+function shade(hex, pct) {
+  const h = hex.replace('#', '');
+  let r = parseInt(h.substring(0, 2), 16), g = parseInt(h.substring(2, 4), 16), b = parseInt(h.substring(4, 6), 16);
+  const t = pct < 0 ? 0 : 255, p = Math.abs(pct) / 100;
+  r = Math.round((t - r) * p + r); g = Math.round((t - g) * p + g); b = Math.round((t - b) * p + b);
+  return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+}
+const BODIES = {
+  sedan: { wheels: [{ cx: 122, r: 25 }, { cx: 360, r: 25 }], body: 'M58,150 Q58,126 80,122 L150,118 Q160,118 168,108 L196,80 Q202,74 214,73 L300,73 Q312,73 318,82 L344,108 L416,114 Q430,116 430,140 L430,160 L58,160 Z', glass: 'M180,100 L205,82 Q210,79 218,78 L298,78 Q308,78 313,86 L332,104 Z', lights: [{ x: 62, y: 132 }, { x: 424, y: 132 }] },
+  coupe: { wheels: [{ cx: 124, r: 25 }, { cx: 358, r: 25 }], body: 'M60,152 Q60,130 82,126 L150,120 Q165,120 175,110 L215,84 Q225,78 240,77 L292,78 Q307,80 318,94 L356,120 L418,126 Q430,128 430,146 L430,160 L60,160 Z', glass: 'M190,104 L218,86 Q226,82 238,82 L290,83 Q302,84 310,96 L336,116 Z', lights: [{ x: 64, y: 138 }, { x: 424, y: 137 }] },
+  sports: { wheels: [{ cx: 120, r: 24 }, { cx: 362, r: 24 }], body: 'M48,150 Q48,134 70,130 L166,124 Q186,124 197,116 L240,90 Q252,84 268,84 L302,86 Q320,90 332,104 L410,128 Q432,132 434,150 L434,160 L48,160 Z', glass: 'M216,108 L244,90 Q254,86 266,87 L300,89 Q312,91 322,102 L348,118 Z', lights: [{ x: 52, y: 142 }, { x: 428, y: 142 }] },
+  suv: { wheels: [{ cx: 122, r: 29 }, { cx: 362, r: 29 }], body: 'M54,138 Q54,116 72,112 L120,108 Q130,108 138,98 L160,64 Q166,56 180,55 L320,55 Q334,56 340,66 L356,102 L420,106 Q436,108 436,130 L436,150 Q436,156 430,156 L60,156 Q54,156 54,150 Z', glass: 'M150,94 L172,62 Q177,58 186,58 L316,58 Q326,59 330,68 L344,96 Z', lights: [{ x: 58, y: 124 }, { x: 430, y: 124 }] },
+  hatchback: { wheels: [{ cx: 122, r: 25 }, { cx: 356, r: 25 }], body: 'M58,150 Q58,126 80,122 L150,118 Q160,118 168,108 L196,78 Q202,72 214,71 L300,72 Q314,73 320,84 L372,128 Q380,134 392,135 L400,136 Q404,150 400,158 L58,160 Z', glass: 'M180,100 L205,80 Q210,77 218,76 L298,77 Q310,78 315,88 L352,120 Z', lights: [{ x: 62, y: 132 }, { x: 393, y: 130 }] },
+  convertible: { wheels: [{ cx: 124, r: 25 }, { cx: 358, r: 25 }], body: 'M58,152 Q58,130 80,126 L160,120 Q176,120 186,113 L206,94 Q210,90 216,92 L228,106 L298,106 L318,110 Q330,104 342,113 L420,126 Q432,128 432,146 L432,160 L58,160 Z', glass: 'M208,98 L226,106 L214,106 Z', lights: [{ x: 62, y: 138 }, { x: 426, y: 138 }] },
+  wagon: { wheels: [{ cx: 122, r: 25 }, { cx: 364, r: 25 }], body: 'M58,150 Q58,126 80,122 L150,118 Q160,118 168,108 L196,78 Q202,72 214,71 L360,72 Q372,73 376,84 L384,120 L420,124 Q432,126 432,146 L432,160 L58,160 Z', glass: 'M180,100 L205,80 Q210,77 218,76 L358,78 Q368,79 371,88 L376,108 Z', lights: [{ x: 62, y: 132 }, { x: 426, y: 132 }] },
+  pickup: { wheels: [{ cx: 118, r: 26 }, { cx: 372, r: 26 }], body: 'M52,150 Q52,126 74,122 L150,118 Q160,118 168,108 L192,80 Q198,74 210,73 L270,74 Q282,75 286,86 L294,118 L300,118 L300,110 L444,110 L444,156 Q444,160 438,160 L52,160 Z', glass: 'M204,100 L214,82 Q218,78 226,78 L268,79 Q278,80 281,90 L286,106 Z', lights: [{ x: 56, y: 132 }, { x: 440, y: 124 }] },
+  van: { wheels: [{ cx: 122, r: 26 }, { cx: 368, r: 26 }], body: 'M52,148 Q52,120 72,116 L120,112 Q128,112 134,102 L150,70 Q156,62 170,61 L420,62 Q436,63 440,80 L440,150 Q440,156 434,156 L58,156 Q52,156 52,150 Z', glass: 'M146,98 L164,68 Q169,63 178,63 L300,64 L300,98 Z', lights: [{ x: 56, y: 122 }, { x: 434, y: 110 }] },
+};
+function carSVG(type, color, uid) {
+  const cfg = BODIES[type] || BODIES.sedan;
+  const gid = 'grad' + uid;
+  const light = shade(color, 26), dark = shade(color, -36), edge = shade(color, -54);
+  let wheels = '';
+  cfg.wheels.forEach(w => {
+    wheels += '<circle cx="' + w.cx + '" cy="160" r="' + w.r + '" fill="#13151a"/><circle cx="' + w.cx + '" cy="160" r="' + (w.r - 7) + '" fill="#2a2e36"/><circle cx="' + w.cx + '" cy="160" r="' + (w.r - 13) + '" fill="#0e1014"/><circle cx="' + w.cx + '" cy="160" r="2.4" fill="#3a3f49"/>';
+  });
+  const fl = cfg.lights[0], rl = cfg.lights[1];
+  return '<svg viewBox="0 0 480 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + light + '"/><stop offset="0.5" stop-color="' + color + '"/><stop offset="1" stop-color="' + dark + '"/></linearGradient></defs><ellipse cx="240" cy="178" rx="196" ry="11" fill="#9aa1ab" opacity="0.4"/><path d="' + cfg.body + '" fill="url(#' + gid + ')" stroke="' + edge + '" stroke-width="1.1"/><path d="' + cfg.glass + '" fill="#11151c" opacity="0.82"/><ellipse cx="210" cy="92" rx="150" ry="24" fill="#fff" opacity="0.12"/><ellipse cx="' + fl.x + '" cy="' + fl.y + '" rx="5" ry="4" fill="#fff7e0"/><rect x="' + (rl.x - 3) + '" y="' + (rl.y - 4) + '" width="5" height="8" rx="1.5" fill="#d24539"/>' + wheels + '</svg>';
+}
+
+/* ===== State ===== */
+let currentUser = null, myCars = [], editingId = null, pickedVis = 'private', viewMode = 'photo', cameFrom = 'collection';
+function currentName() { if (!currentUser) return 'You'; return (currentUser.user_metadata && currentUser.user_metadata.display_name) || (currentUser.email || 'You').split('@')[0]; }
+function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function typeLabel(v) { const m = { sedan: 'Sedan', coupe: 'Coupe', sports: 'Sports', suv: 'SUV', hatchback: 'Hatchback', convertible: 'Convertible', wagon: 'Wagon', pickup: 'Pickup', van: 'Van' }; return m[v] || 'Car'; }
+function showView(v) { ['setup', 'login', 'collection', 'showroom', 'explore'].forEach(x => document.getElementById('view-' + x).classList.add('hidden')); document.getElementById('view-' + v).classList.remove('hidden'); window.scrollTo(0, 0); }
+function setMode(m) { viewMode = m; document.body.classList.toggle('mode-illus', m === 'illus'); document.querySelectorAll('.toggle-mini button').forEach(b => b.classList.toggle('active', b.dataset.mode === m)); }
+
+/* ===== Auth ===== */
+let authMode = 'login';
+function setAuthTab(mode) {
+  authMode = mode;
+  document.getElementById('tab-login').classList.toggle('active', mode === 'login');
+  document.getElementById('tab-register').classList.toggle('active', mode === 'register');
+  document.getElementById('nameWrap').style.display = mode === 'register' ? '' : 'none';
+  document.getElementById('authBtn').textContent = mode === 'register' ? 'Create account' : 'Enter Garage';
+  const e = document.getElementById('authErr'); e.textContent = ''; e.className = 'err';
+}
+async function submitAuth() {
+  const email = document.getElementById('f-email').value.trim().toLowerCase();
+  const pass = document.getElementById('f-pass').value;
+  const name = document.getElementById('f-name').value.trim();
+  const err = document.getElementById('authErr'); err.className = 'err'; err.textContent = '';
+  if (!email || !pass) { err.textContent = 'Please enter your email and password.'; return; }
+  const btn = document.getElementById('authBtn'); const label = btn.textContent; btn.textContent = 'Please wait…';
+  try {
+    if (authMode === 'register') {
+      if (!name) { err.textContent = 'Please enter a display name.'; btn.textContent = label; return; }
+      const { data, error } = await sb.auth.signUp({ email, password: pass, options: { data: { display_name: name } } });
+      if (error) { err.textContent = error.message; btn.textContent = label; return; }
+      if (data.session) { currentUser = data.user; await enterApp(); }
+      else { err.className = 'err ok'; err.textContent = 'Account created — now log in.'; setAuthTab('login'); }
+    } else {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+      if (error) { err.textContent = error.message; btn.textContent = label; return; }
+      currentUser = data.user; await enterApp();
+    }
+  } catch (e) { err.textContent = 'Could not reach the server. Check your connection.'; btn.textContent = label; }
+}
+async function signOut() { try { await sb.auth.signOut(); } catch (e) {} currentUser = null; myCars = []; showView('login'); setAuthTab('login'); }
+
+/* ===== Collection ===== */
+async function enterApp() { document.getElementById('userName').textContent = currentName(); goCollection(); await loadMyCars(); }
+function goCollection() { showView('collection'); }
+async function loadMyCars() {
+  const g = document.getElementById('grid'); g.innerHTML = '<div class="loading">Opening your collection…</div>';
+  const { data, error } = await sb.from('cars').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: true });
+  if (error) { g.innerHTML = '<div class="empty"><h3>Couldn\'t load your cars</h3><p>' + esc(error.message) + '</p></div>'; return; }
+  myCars = data || []; renderCollection();
+}
+function ownership(c) { return c.owned_to ? 'Past' : 'Current'; }
+function renderCollection() {
+  const g = document.getElementById('grid');
+  if (!myCars.length) {
+    g.innerHTML = '<div class="empty"><svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 21V9l9-6 9 6v12z"/><path d="M9 21v-7h6v7"/></svg><h3>Your garage is empty</h3><p>Start your journey by adding your first car.</p></div>';
+    return;
+  }
+  g.innerHTML = myCars.map(c => vcard(c, true)).join('');
+}
+function vcard(c, own) {
+  const r = resolveColor(c.color_name);
+  const hex = c.color_hex || r.hex;
+  const sold = c.owned_to ? esc(c.owned_to) : 'Present';
+  const topRight = own
+    ? '<div class="trash" title="Remove" onclick="deleteCar(\'' + c.id + '\')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></div><div class="pencil" title="Edit" onclick="editCar(\'' + c.id + '\')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3z"/></svg></div>'
+    : '';
+  const visBadge = own
+    ? '<div class="vis ' + (c.is_public ? 'pub' : '') + '" title="Click to ' + (c.is_public ? 'make private' : 'publish') + '" onclick="togglePublic(\'' + c.id + '\',' + (!c.is_public) + ')"><span class="dot"></span>' + (c.is_public ? 'Public' : 'Private') + '</div>'
+    : '<div class="vis" style="cursor:default">' + esc(c.curator_name || 'A collector') + '</div>';
+  return '<div class="vcard">' +
+    '<div class="vphoto">' + visBadge + topRight +
+    '<img class="car-photo" id="ph-' + c.id + '" src="' + carPhotoUrl(c, '23') + '" alt="' + esc(c.make + ' ' + c.model) + '" loading="lazy" onerror="this.classList.add(\'failed\')" />' +
+    '<div class="illus">' + carSVG(c.body, hex, c.id) + '</div>' +
+    '<div class="angles">' + THUMB_ANGLES.map(function (a) { return '<img class="thumb" src="' + carPhotoUrl(c, a) + '" loading="lazy" onclick="swapPhoto(\'' + c.id + '\', this.src)" onerror="this.remove()" />'; }).join('') + '</div></div>' +
+    '<div class="vbody">' +
+    '<div class="vtop"><div class="vname">' + esc(c.make) + ' ' + esc(c.model) + '</div><div class="vtype">' + typeLabel(c.body) + '</div></div>' +
+    '<div class="vsub">' + esc(c.year || '—') + ' &bull; ' + esc(c.color_name || '') + '</div>' +
+    '<div class="vdata"><div><div class="k">Bought</div><div class="v">' + esc(c.owned_from || '—') + '</div></div>' +
+    '<div><div class="k">Sold</div><div class="v">' + sold + '</div></div>' +
+    '<div><div class="k">Ownership</div><div class="v">' + ownership(c) + '</div></div></div>' +
+    (c.description ? '<div class="vdesc">' + esc(c.description) + '</div>' : '') +
+    (c.story ? '<div class="vnote">' + esc(c.story) + '</div>' : '') +
+    '</div></div>';
+}
+async function togglePublic(id, mk) { const { error } = await sb.from('cars').update({ is_public: mk }).eq('id', id); if (error) { alert(error.message); return; } await loadMyCars(); }
+
+/* ===== Showroom timeline ===== */
+function openShowroom() {
+  showView('showroom');
+  const t = document.getElementById('timeline');
+  const cars = myCars.slice().sort((a, b) => (parseInt(a.year) || 9999) - (parseInt(b.year) || 9999));
+  if (!cars.length) { t.innerHTML = '<div style="color:var(--muted);padding:40px">No cars yet — add some from your collection.</div>'; return; }
+  t.innerHTML = cars.map(c => {
+    const r = resolveColor(c.color_name); const hex = c.color_hex || r.hex;
+    return '<div class="tcar"><div class="frame"><img class="car-photo" src="' + carPhotoUrl(c) + '" alt="" loading="lazy" onerror="this.classList.add(\'failed\')" /><div class="illus">' + carSVG(c.body, hex, 't' + c.id) + '</div></div>' +
+      '<div class="cap">' + esc(c.make) + ' ' + esc(c.model) + '</div><div class="yr">' + esc(c.year || '—') + '</div></div>';
+  }).join('');
+}
+
+/* ===== Explore ===== */
+async function openExplore() {
+  cameFrom = currentUser ? 'collection' : 'login';
+  document.getElementById('exploreBack').textContent = currentUser ? 'My collection' : 'Back';
+  showView('explore');
+  const g = document.getElementById('exploreGrid'); g.innerHTML = '<div class="loading">Gathering public garages…</div>';
+  const { data, error } = await sb.from('cars').select('*').eq('is_public', true).order('created_at', { ascending: false }).limit(60);
+  if (error) { g.innerHTML = '<div class="empty"><h3>Couldn\'t load public cars</h3><p>' + esc(error.message) + '</p></div>'; return; }
+  if (!data || !data.length) { g.innerHTML = '<div class="empty"><h3>No public cars yet</h3><p>Be the first to publish one.</p></div>'; return; }
+  g.innerHTML = data.map(c => vcard(c, false)).join('');
+}
+function backFromExplore() { showView(currentUser ? 'collection' : 'login'); }
+
+/* ===== Modal ===== */
+function openModal() {
+  editingId = null;
+  document.getElementById('modalTitle').textContent = 'Add New Vehicle';
+  document.getElementById('saveBtn').textContent = 'Add Vehicle';
+  ['m-make', 'm-model', 'm-color', 'm-built', 'm-bought', 'm-sold', 'm-desc', 'm-anec'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('m-type').value = 'coupe';
+  document.getElementById('descCount').textContent = '0 / 100';
+  document.getElementById('anecCount').textContent = '0 / 600';
+  document.getElementById('modalErr').textContent = '';
+  setVis('private'); syncColor();
+  document.getElementById('modal').classList.remove('hidden');
+}
+function closeModal() { document.getElementById('modal').classList.add('hidden'); }
+function setVis(v) { pickedVis = v; document.querySelectorAll('.sg').forEach(b => b.classList.toggle('active', b.dataset.v === v)); }
+function syncColor() { document.getElementById('colorChip').style.background = resolveColor(document.getElementById('m-color').value).hex; }
+
+async function saveCar() {
+  const make = document.getElementById('m-make').value.trim();
+  const model = document.getElementById('m-model').value.trim();
+  const err = document.getElementById('modalErr');
+  if (!make || !model) { err.textContent = 'Please enter at least a make and model.'; return; }
+  const colorName = document.getElementById('m-color').value.trim();
+  const r = resolveColor(colorName);
+  const row = {
+    user_id: currentUser.id, curator_name: currentName(),
+    make, model, body: document.getElementById('m-type').value,
+    color_name: colorName, color_hex: r.hex, paint: r.paint,
+    year: document.getElementById('m-built').value.trim(),
+    owned_from: document.getElementById('m-bought').value.trim(),
+    owned_to: document.getElementById('m-sold').value.trim(),
+    description: document.getElementById('m-desc').value.trim(),
+    story: document.getElementById('m-anec').value.trim(),
+    is_public: pickedVis === 'public',
+  };
+  const btn = document.getElementById('saveBtn'); btn.textContent = 'Saving…';
+  let error;
+  if (editingId) { ({ error } = await sb.from('cars').update(row).eq('id', editingId)); }
+  else { ({ error } = await sb.from('cars').insert(row)); }
+  btn.textContent = editingId ? 'Save changes' : 'Add Vehicle';
+  if (error) { err.textContent = error.message; return; }
+  closeModal(); await loadMyCars();
+}
+function editCar(id) {
+  const c = myCars.find(x => x.id === id); if (!c) return;
+  editingId = id;
+  document.getElementById('modalTitle').textContent = 'Edit Vehicle';
+  document.getElementById('saveBtn').textContent = 'Save changes';
+  document.getElementById('m-make').value = c.make || '';
+  document.getElementById('m-model').value = c.model || '';
+  document.getElementById('m-type').value = c.body || 'coupe';
+  document.getElementById('m-color').value = c.color_name || '';
+  document.getElementById('m-built').value = c.year || '';
+  document.getElementById('m-bought').value = c.owned_from || '';
+  document.getElementById('m-sold').value = c.owned_to || '';
+  document.getElementById('m-desc').value = c.description || '';
+  document.getElementById('m-anec').value = c.story || '';
+  document.getElementById('descCount').textContent = (c.description || '').length + ' / 100';
+  document.getElementById('anecCount').textContent = (c.story || '').length + ' / 600';
+  document.getElementById('modalErr').textContent = '';
+  setVis(c.is_public ? 'public' : 'private'); syncColor();
+  document.getElementById('modal').classList.remove('hidden');
+}
+async function deleteCar(id) { const { error } = await sb.from('cars').delete().eq('id', id); if (error) { alert(error.message); return; } await loadMyCars(); }
+
+/* ===== Boot ===== */
+(async function () {
+  setMode('photo');
+  if (!configured) { showView('setup'); return; }
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) { currentUser = session.user; await enterApp(); }
+    else { showView('login'); setAuthTab('login'); }
+    sb.auth.onAuthStateChange((_e, s) => { currentUser = s ? s.user : null; });
+  } catch (e) { showView('login'); setAuthTab('login'); }
+})();
+</script>
+</body>
+</html>
