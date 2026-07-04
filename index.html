@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>My Life in Cars</title>
-<!-- My Life in Cars — v1.2 (adds type filter on the overview) -->
+<!-- My Life in Cars — v1.4 (manager tags top-right) -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -99,7 +99,8 @@
   body.mode-illus .vphoto .angles { display: none; }
   .vphoto .angles .thumb { width: 44px; height: 30px; object-fit: contain; background: #fff; border: 1px solid var(--line); border-radius: 6px; cursor: pointer; padding: 2px; opacity: 0.92; transition: all 0.15s; }
   .vphoto .angles .thumb:hover { opacity: 1; border-color: var(--ink); }
-  .mgr { position: absolute; bottom: 8px; right: 8px; z-index: 4; display: flex; gap: 6px; }
+  .mgr { position: absolute; top: 8px; right: 8px; z-index: 5; display: flex; gap: 6px; }
+  .mgr.own { top: 54px; }
   .mtag { font-size: 11px; font-weight: 600; letter-spacing: 0.03em; border-radius: 6px; padding: 5px 10px; cursor: pointer; border: 1px solid var(--line); background: rgba(255,255,255,0.95); color: var(--ink); }
   .mtag:hover { border-color: var(--ink); }
   .mtag.del { color: var(--danger); border-color: rgba(192,71,60,0.5); }
@@ -248,7 +249,7 @@
   </div>
   <div class="band"></div>
   <div class="wrap"><div class="grid" id="grid"></div></div>
-  <footer>My Life in Cars · v1.2</footer>
+  <footer>My Life in Cars · v1.4</footer>
 </div>
 
 <!-- ============ VIRTUAL SHOWROOM ============ -->
@@ -274,7 +275,7 @@
   </div>
   <div class="band"></div>
   <div class="wrap"><div class="grid" id="exploreGrid"></div></div>
-  <footer>My Life in Cars · v1.2</footer>
+  <footer>My Life in Cars · v1.4</footer>
 </div>
 
 <!-- ============ ADD / EDIT MODAL ============ -->
@@ -356,15 +357,29 @@ const ANGLE_VIEWS = [
 ];
 const THUMB_ANGLES = ANGLE_VIEWS.map(a => a.key);
 function hashSeed(s) { let h = 2166136261; s = String(s); for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return Math.abs(h) % 100000; }
+const BODY_DESC = {
+  sedan: 'four-door sedan',
+  coupe: 'sleek two-door coupe',
+  sports: 'low-slung sports car',
+  suv: 'tall SUV with high ground clearance and an upright boxy body',
+  hatchback: 'compact hatchback',
+  convertible: 'open-top convertible with the roof folded down and no roof over the cabin',
+  wagon: 'estate station wagon with an extended long roofline',
+  pickup: 'pickup truck with an open rear cargo bed',
+  van: 'tall boxy van MPV people-carrier',
+};
+const TALL_BODIES = { suv: 1, van: 1, pickup: 1 };
 function carPhotoUrl(car, angle) {
   const view = ANGLE_VIEWS.find(a => a.key === angle) || ANGLE_VIEWS[0];
   const color = (car.color_name || resolveColor(car.color_name).paint || '').trim();
   const year = car.year ? car.year + ' ' : '';
-  const prompt = 'professional studio photograph of a ' + year + (car.make || '') + ' ' + (car.model || '') +
+  const desc = BODY_DESC[car.body] || 'car';
+  const prompt = 'professional studio photograph of a ' + year + (car.make || '') + ' ' + (car.model || '') + ', ' + desc +
     (color ? ', ' + color + ' paint' : '') + ', ' + view.phrase +
-    ', plain white seamless studio background, entire car centered and fully visible, sharp focus, automotive product photo';
+    ', the entire vehicle from roof to tyres fully visible and in correct proportion, plain white seamless studio background, centered, sharp focus, automotive product photo';
   const seed = hashSeed((car.id || ((car.make || '') + (car.model || '') + (car.year || ''))) + view.key);
-  const p = new URLSearchParams({ width: '640', height: '420', nologo: 'true', model: 'flux', seed: String(seed) });
+  const h = TALL_BODIES[car.body] ? '470' : '420';
+  const p = new URLSearchParams({ width: '640', height: h, nologo: 'true', model: 'flux', seed: String(seed) });
   return 'https://image.pollinations.ai/prompt/' + encodeURIComponent(prompt) + '?' + p.toString();
 }
 function swapPhoto(id, src) { const el = document.getElementById('ph-' + id); if (el) el.src = src; }
@@ -482,7 +497,7 @@ function vcard(c, own) {
     ? '<div class="vis ' + (c.is_public ? 'pub' : '') + '" title="Click to ' + (c.is_public ? 'make private' : 'publish') + '" onclick="togglePublic(\'' + c.id + '\',' + (!c.is_public) + ')"><span class="dot"></span>' + (c.is_public ? 'Public' : 'Private') + '</div>'
     : '<div class="vis" style="cursor:default">' + esc(c.curator_name || 'A collector') + '</div>';
   const mgr = isManager()
-    ? '<div class="mgr">' + (own ? '' : '<button class="mtag del" onclick="managerDelete(\'' + c.id + '\')">Delete</button>') + '<button class="mtag ref" onclick="refreshPhotos(\'' + c.id + '\')">Refresh</button></div>'
+    ? '<div class="mgr' + (own ? ' own' : '') + '">' + (own ? '' : '<button class="mtag del" onclick="managerDelete(\'' + c.id + '\')">Delete</button>') + '<button class="mtag ref" onclick="refreshPhotos(\'' + c.id + '\')">Refresh</button></div>'
     : '';
   return '<div class="vcard">' +
     '<div class="vphoto">' + visBadge + topRight + mgr +
