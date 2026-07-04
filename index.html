@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>My Life in Cars</title>
+<!-- My Life in Cars — v1.2 (adds type filter on the overview) -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -98,6 +99,17 @@
   body.mode-illus .vphoto .angles { display: none; }
   .vphoto .angles .thumb { width: 44px; height: 30px; object-fit: contain; background: #fff; border: 1px solid var(--line); border-radius: 6px; cursor: pointer; padding: 2px; opacity: 0.92; transition: all 0.15s; }
   .vphoto .angles .thumb:hover { opacity: 1; border-color: var(--ink); }
+  .mgr { position: absolute; bottom: 8px; right: 8px; z-index: 4; display: flex; gap: 6px; }
+  .mtag { font-size: 11px; font-weight: 600; letter-spacing: 0.03em; border-radius: 6px; padding: 5px 10px; cursor: pointer; border: 1px solid var(--line); background: rgba(255,255,255,0.95); color: var(--ink); }
+  .mtag:hover { border-color: var(--ink); }
+  .mtag.del { color: var(--danger); border-color: rgba(192,71,60,0.5); }
+  .mtag.del:hover { border-color: var(--danger); background: #fff; }
+  .vtype.clickable { cursor: pointer; transition: background 0.15s, color 0.15s; }
+  .vtype.clickable:hover { background: var(--ink); color: #fff; }
+  .vtype.active { background: var(--ink); color: #fff; }
+  .filterbar { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--muted); padding: 2px 2px 8px; }
+  .filterbar button { background: none; border: none; color: var(--blue); cursor: pointer; font-size: 13px; font-weight: 600; padding: 0; }
+  .filterbar button:hover { text-decoration: underline; }
   .pencil { position: absolute; top: 12px; right: 12px; z-index: 3; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.92); border: 1px solid var(--line); display: grid; place-items: center; cursor: pointer; color: var(--muted); box-shadow: 0 2px 8px rgba(20,26,42,0.12); }
   .pencil:hover { color: var(--ink); }
   .trash { position: absolute; top: 12px; right: 54px; z-index: 3; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.92); border: 1px solid var(--line); display: grid; place-items: center; cursor: pointer; color: var(--muted); opacity: 0; transition: opacity 0.18s; box-shadow: 0 2px 8px rgba(20,26,42,0.12); }
@@ -236,7 +248,7 @@
   </div>
   <div class="band"></div>
   <div class="wrap"><div class="grid" id="grid"></div></div>
-  <footer>My Life in Cars — your collection, kept for good.</footer>
+  <footer>My Life in Cars · v1.2</footer>
 </div>
 
 <!-- ============ VIRTUAL SHOWROOM ============ -->
@@ -262,7 +274,7 @@
   </div>
   <div class="band"></div>
   <div class="wrap"><div class="grid" id="exploreGrid"></div></div>
-  <footer>My Life in Cars</footer>
+  <footer>My Life in Cars · v1.2</footer>
 </div>
 
 <!-- ============ ADD / EDIT MODAL ============ -->
@@ -389,8 +401,10 @@ function carSVG(type, color, uid) {
 }
 
 /* ===== State ===== */
-let currentUser = null, myCars = [], editingId = null, pickedVis = 'private', viewMode = 'photo', cameFrom = 'collection';
+let currentUser = null, myCars = [], exploreCars = [], exploreFilter = null, editingId = null, pickedVis = 'private', viewMode = 'photo', cameFrom = 'collection';
 function currentName() { if (!currentUser) return 'You'; const m = currentUser.user_metadata || {}; return m.display_name || m.full_name || m.name || (currentUser.email || 'You').split('@')[0]; }
+function isManager() { if (!currentUser) return false; const m = currentUser.user_metadata || {}; const hay = [m.display_name, m.full_name, m.name, currentUser.email].filter(Boolean).join(' ').toLowerCase(); return hay.indexOf('manager') !== -1; }
+function findCar(id) { return myCars.find(x => x.id === id) || exploreCars.find(x => x.id === id); }
 function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 function typeLabel(v) { const m = { sedan: 'Sedan', coupe: 'Coupe', sports: 'Sports', suv: 'SUV', hatchback: 'Hatchback', convertible: 'Convertible', wagon: 'Wagon', pickup: 'Pickup', van: 'Van' }; return m[v] || 'Car'; }
 function showView(v) { ['setup', 'login', 'collection', 'showroom', 'explore'].forEach(x => document.getElementById('view-' + x).classList.add('hidden')); document.getElementById('view-' + v).classList.remove('hidden'); window.scrollTo(0, 0); }
@@ -467,13 +481,16 @@ function vcard(c, own) {
   const visBadge = own
     ? '<div class="vis ' + (c.is_public ? 'pub' : '') + '" title="Click to ' + (c.is_public ? 'make private' : 'publish') + '" onclick="togglePublic(\'' + c.id + '\',' + (!c.is_public) + ')"><span class="dot"></span>' + (c.is_public ? 'Public' : 'Private') + '</div>'
     : '<div class="vis" style="cursor:default">' + esc(c.curator_name || 'A collector') + '</div>';
+  const mgr = isManager()
+    ? '<div class="mgr">' + (own ? '' : '<button class="mtag del" onclick="managerDelete(\'' + c.id + '\')">Delete</button>') + '<button class="mtag ref" onclick="refreshPhotos(\'' + c.id + '\')">Refresh</button></div>'
+    : '';
   return '<div class="vcard">' +
-    '<div class="vphoto">' + visBadge + topRight +
+    '<div class="vphoto">' + visBadge + topRight + mgr +
     '<img class="car-photo" id="ph-' + c.id + '" src="' + carPhotoUrl(c, '23') + '" alt="' + esc(c.make + ' ' + c.model) + '" loading="lazy" onerror="this.classList.add(\'failed\')" />' +
     '<div class="illus">' + carSVG(c.body, hex, c.id) + '</div>' +
     '<div class="angles">' + THUMB_ANGLES.map(function (a) { return '<img class="thumb" src="' + carPhotoUrl(c, a) + '" loading="lazy" onclick="swapPhoto(\'' + c.id + '\', this.src)" onerror="this.remove()" />'; }).join('') + '</div></div>' +
     '<div class="vbody">' +
-    '<div class="vtop"><div class="vname">' + esc(c.make) + ' ' + esc(c.model) + '</div><div class="vtype">' + typeLabel(c.body) + '</div></div>' +
+    '<div class="vtop"><div class="vname">' + esc(c.make) + ' ' + esc(c.model) + '</div>' + (own ? '<div class="vtype">' + typeLabel(c.body) + '</div>' : '<div class="vtype clickable' + (exploreFilter === c.body ? ' active' : '') + '" title="Show only ' + typeLabel(c.body) + '" onclick="filterExplore(\'' + c.body + '\')">' + typeLabel(c.body) + '</div>') + '</div>' +
     '<div class="vsub">' + esc(c.year || '—') + ' &bull; ' + esc(c.color_name || '') + '</div>' +
     '<div class="vdata"><div><div class="k">Bought</div><div class="v">' + esc(c.owned_from || '—') + '</div></div>' +
     '<div><div class="k">Sold</div><div class="v">' + sold + '</div></div>' +
@@ -506,7 +523,23 @@ async function openExplore() {
   const { data, error } = await sb.from('cars').select('*').eq('is_public', true).order('created_at', { ascending: false }).limit(60);
   if (error) { g.innerHTML = '<div class="empty"><h3>Couldn\'t load public cars</h3><p>' + esc(error.message) + '</p></div>'; return; }
   if (!data || !data.length) { g.innerHTML = '<div class="empty"><h3>No public cars yet</h3><p>Be the first to publish one.</p></div>'; return; }
-  g.innerHTML = data.map(c => vcard(c, false)).join('');
+  exploreCars = data;
+  exploreCars = data;
+  exploreFilter = null;
+  renderExplore();
+}
+function renderExplore() {
+  const g = document.getElementById('exploreGrid');
+  let list = exploreFilter ? exploreCars.filter(c => c.body === exploreFilter) : exploreCars;
+  let bar = exploreFilter
+    ? '<div class="filterbar">Showing ' + typeLabel(exploreFilter) + ' only <button onclick="filterExplore(\'' + exploreFilter + '\')">Show all</button></div>'
+    : '';
+  if (!list.length) { g.innerHTML = bar + '<div class="empty"><h3>Nothing to show</h3><p>No cars of that type here yet.</p></div>'; return; }
+  g.innerHTML = bar + list.map(c => vcard(c, false)).join('');
+}
+function filterExplore(type) {
+  exploreFilter = (exploreFilter === type) ? null : type;
+  renderExplore();
 }
 function backFromExplore() { showView(currentUser ? 'collection' : 'login'); }
 
@@ -574,6 +607,33 @@ function editCar(id) {
   document.getElementById('modal').classList.remove('hidden');
 }
 async function deleteCar(id) { const { error } = await sb.from('cars').delete().eq('id', id); if (error) { alert(error.message); return; } await loadMyCars(); }
+
+/* ===== Manager-only tools (shown when the signed-in name/email contains "manager") ===== */
+async function managerDelete(id) {
+  if (!isManager()) return;
+  const c = findCar(id);
+  const name = c ? (c.make + ' ' + c.model) : 'this car';
+  if (!confirm('Delete ' + name + ' from the collection? This cannot be undone.')) return;
+  const { error } = await sb.from('cars').delete().eq('id', id);
+  if (error) { alert('Delete failed: ' + error.message + '\n\n(If this says permission denied, run the manager SQL snippet in Supabase.)'); return; }
+  exploreCars = exploreCars.filter(x => x.id !== id);
+  myCars = myCars.filter(x => x.id !== id);
+  if (!document.getElementById('view-explore').classList.contains('hidden')) { renderExplore(); }
+  else { renderCollection(); }
+}
+function refreshPhotos(id) {
+  const c = findCar(id); if (!c) return;
+  const main = document.getElementById('ph-' + id); if (!main) return;
+  const photo = main.closest('.vphoto'); if (!photo) return;
+  const nonce = Date.now();
+  const bust = function (u) { return u + '&_r=' + nonce; };
+  main.classList.remove('failed');
+  main.src = bust(carPhotoUrl(c, '23'));
+  const angles = photo.querySelector('.angles');
+  if (angles) {
+    angles.innerHTML = THUMB_ANGLES.map(function (a) { return '<img class="thumb" src="' + bust(carPhotoUrl(c, a)) + '" loading="lazy" onclick="swapPhoto(\'' + id + '\', this.src)" onerror="this.remove()" />'; }).join('');
+  }
+}
 
 /* ===== Boot ===== */
 (async function () {
