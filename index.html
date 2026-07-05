@@ -4,6 +4,15 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>My Life in Cars</title>
+<meta name="description" content="My Life in Cars - A personal digital museum and timeline of your automotive journey. Document your car collection, store anecdotes, and generate custom AI photos." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://gregorpetri-git.github.io/mylifeincars-c/" />
+<meta property="og:title" content="My Life in Cars — A Digital Showroom" />
+<meta property="og:description" content="A personal digital museum and timeline of your automotive journey. Document your car collection, store anecdotes, and generate custom AI photos." />
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content="https://gregorpetri-git.github.io/mylifeincars-c/" />
+<meta property="twitter:title" content="My Life in Cars — A Digital Showroom" />
+<meta property="twitter:description" content="A personal digital museum and timeline of your automotive journey. Document your car collection, store anecdotes, and generate custom AI photos." />
 <!-- My Life in Cars — v1.4 (manager tags top-right) -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -580,6 +589,55 @@ async function saveCar() {
   const model = document.getElementById('m-model').value.trim();
   const err = document.getElementById('modalErr');
   if (!make || !model) { err.textContent = 'Please enter at least a make and model.'; return; }
+
+  const yearBuiltStr = document.getElementById('m-built').value.trim();
+  const yearBoughtStr = document.getElementById('m-bought').value.trim();
+  const yearSoldStr = document.getElementById('m-sold').value.trim();
+
+  if (yearBuiltStr && !/^\d{4}$/.test(yearBuiltStr)) {
+    err.textContent = 'Year built must be a 4-digit number (e.g. 2021).';
+    return;
+  }
+  if (!yearBoughtStr) {
+    err.textContent = 'Please enter the year you bought the vehicle.';
+    return;
+  }
+  if (!/^\d{4}$/.test(yearBoughtStr)) {
+    err.textContent = 'Year bought must be a 4-digit number (e.g. 2025).';
+    return;
+  }
+  if (yearSoldStr && !/^\d{4}$/.test(yearSoldStr)) {
+    err.textContent = 'Year sold must be a 4-digit number, or left empty.';
+    return;
+  }
+
+  const yBuilt = yearBuiltStr ? parseInt(yearBuiltStr, 10) : null;
+  const yBought = parseInt(yearBoughtStr, 10);
+  const ySold = yearSoldStr ? parseInt(yearSoldStr, 10) : null;
+
+  const currentYear = new Date().getFullYear();
+  if (yBuilt && yBuilt > currentYear + 1) {
+    err.textContent = 'Year built cannot be in the future.';
+    return;
+  }
+  if (yBought > currentYear) {
+    err.textContent = 'Year bought cannot be in the future.';
+    return;
+  }
+  if (yBuilt && yBought < yBuilt) {
+    err.textContent = 'Year bought cannot be earlier than the year built.';
+    return;
+  }
+  if (ySold) {
+    if (ySold < yBought) {
+      err.textContent = 'Year sold cannot be earlier than the year bought.';
+      return;
+    }
+    if (ySold > currentYear) {
+      err.textContent = 'Year sold cannot be in the future.';
+      return;
+    }
+  }
   const colorName = document.getElementById('m-color').value.trim();
   const r = resolveColor(colorName);
   const row = {
@@ -621,7 +679,14 @@ function editCar(id) {
   setVis(c.is_public ? 'public' : 'private'); syncColor();
   document.getElementById('modal').classList.remove('hidden');
 }
-async function deleteCar(id) { const { error } = await sb.from('cars').delete().eq('id', id); if (error) { alert(error.message); return; } await loadMyCars(); }
+async function deleteCar(id) {
+  const c = myCars.find(x => x.id === id);
+  const name = c ? (c.make + ' ' + c.model) : 'this vehicle';
+  if (!confirm('Are you sure you want to remove ' + name + ' from your collection? This cannot be undone.')) return;
+  const { error } = await sb.from('cars').delete().eq('id', id);
+  if (error) { alert(error.message); return; }
+  await loadMyCars();
+}
 
 /* ===== Manager-only tools (shown when the signed-in name/email contains "manager") ===== */
 async function managerDelete(id) {
