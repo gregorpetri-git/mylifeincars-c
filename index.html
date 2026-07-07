@@ -208,6 +208,10 @@
   .toggle-mini button.active { background: var(--field); color: var(--ink); }
 
   footer { border-top: 1px solid var(--line); padding: 28px 0; color: var(--muted-2); font-size: 12px; text-align: center; }
+  #view-explore { background: #ffffff !important; }
+  #view-explore .nav { background: rgba(255, 255, 255, 0.9) !important; border-color: rgba(255, 255, 255, 0.5) !important; }
+  #view-explore .page-head { background: #ffffff !important; }
+  #view-explore .grid { background: #ffffff !important; }
 </style>
 </head>
 <body>
@@ -349,7 +353,17 @@
       <div class="err" id="modalErr"></div>
       <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-dark" id="saveBtn" onclick="saveCar()">Add Vehicle</button></div>
     </div>
+<!-- ============ DETAIL MODAL ============ -->
+<div id="detailModal" class="modal-bg hidden" onclick="if(event.target===this)closeDetailModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="detailTitle">Vehicle Details</h2>
+      <button class="x" onclick="closeDetailModal()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="modal-body" id="detailBody">
+    </div>
   </div>
+</div>
 </div>
 
 <script>
@@ -527,21 +541,21 @@ function vcard(c, own) {
   const hex = c.color_hex || r.hex;
   const sold = c.owned_to ? esc(c.owned_to) : 'Present';
   const topRight = own
-    ? '<div class="trash" title="Remove" onclick="deleteCar(\'' + c.id + '\')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></div><div class="pencil" title="Edit" onclick="editCar(\'' + c.id + '\')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3z"/></svg></div>'
+    ? '<div class="trash" title="Remove" onclick="event.stopPropagation(); deleteCar(\'' + c.id + '\')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></div><div class="pencil" title="Edit" onclick="event.stopPropagation(); editCar(\'' + c.id + '\')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3z"/></svg></div>'
     : '';
   const visBadge = own
-    ? '<div class="vis ' + (c.is_public ? 'pub' : '') + '" title="Click to ' + (c.is_public ? 'make private' : 'publish') + '" onclick="togglePublic(\'' + c.id + '\',' + (!c.is_public) + ')"><span class="dot"></span>' + (c.is_public ? 'Public' : 'Private') + '</div>'
-    : '<div class="vis pub" title="Show only ' + esc(c.curator_name || 'this collector') + '\'s collection" onclick="filterExploreOwner(\'' + esc(c.user_id || c.curator_name || '') + '\')"><span class="dot"></span>' + esc(c.curator_name || 'A collector') + '</div>';
+    ? '<div class="vis ' + (c.is_public ? 'pub' : '') + '" title="Click to ' + (c.is_public ? 'make private' : 'publish') + '" onclick="event.stopPropagation(); togglePublic(\'' + c.id + '\',' + (!c.is_public) + ')"><span class="dot"></span>' + (c.is_public ? 'Public' : 'Private') + '</div>'
+    : '<div class="vis pub" title="Show only ' + esc(c.curator_name || 'this collector') + '\'s collection" onclick="event.stopPropagation(); filterExploreOwner(\'' + esc(c.user_id || c.curator_name || '') + '\')"><span class="dot"></span>' + esc(c.curator_name || 'A collector') + '</div>';
   const mgr = isManager()
-    ? '<div class="mgr' + (own ? ' own' : '') + '">' + (own ? '' : '<button class="mtag del" onclick="managerDelete(\'' + c.id + '\')">Delete</button>') + '<button class="mtag ref" onclick="refreshPhotos(\'' + c.id + '\')">Refresh</button></div>'
+    ? '<div class="mgr' + (own ? ' own' : '') + '">' + (own ? '' : '<button class="mtag del" onclick="event.stopPropagation(); managerDelete(\'' + c.id + '\')">Delete</button>') + '<button class="mtag ref" onclick="event.stopPropagation(); refreshPhotos(\'' + c.id + '\')">Refresh</button></div>'
     : '';
   return '<div class="vcard">' +
-    '<div class="vphoto">' + visBadge + topRight + mgr +
+    '<div class="vphoto" onclick="openDetail(\'' + c.id + '\')" style="cursor:pointer">' + visBadge + topRight + mgr +
     '<img class="car-photo" id="ph-' + c.id + '" src="' + carPhotoUrl(c, '23') + '" alt="' + esc(c.make + ' ' + c.model) + '" loading="lazy" onerror="this.classList.add(\'failed\')" />' +
     '<div class="illus">' + carSVG(c.body, hex, c.id) + '</div>' +
-    '<div class="angles">' + THUMB_ANGLES.map(function (a) { return '<img class="thumb" src="' + carPhotoUrl(c, a) + '" loading="lazy" onclick="swapPhoto(\'' + c.id + '\', this.src)" onerror="this.remove()" />'; }).join('') + '</div></div>' +
-    '<div class="vbody">' +
-    '<div class="vtop"><div class="vname">' + esc(c.make) + ' ' + esc(c.model) + '</div>' + (own ? '<div class="vtype">' + typeLabel(c.body) + '</div>' : '<div class="vtype clickable' + (exploreFilter === c.body ? ' active' : '') + '" title="Show only ' + typeLabel(c.body) + '" onclick="filterExplore(\'' + c.body + '\')">' + typeLabel(c.body) + '</div>') + '</div>' +
+    '<div class="angles">' + THUMB_ANGLES.map(function (a) { return '<img class="thumb" src="' + carPhotoUrl(c, a) + '" loading="lazy" onclick="event.stopPropagation(); swapPhoto(\'' + c.id + '\', this.src)" onerror="this.remove()" />'; }).join('') + '</div></div>' +
+    '<div class="vbody" onclick="openDetail(\'' + c.id + '\')" style="cursor:pointer">' +
+    '<div class="vtop"><div class="vname">' + esc(c.make) + ' ' + esc(c.model) + '</div>' + (own ? '<div class="vtype">' + typeLabel(c.body) + '</div>' : '<div class="vtype clickable' + (exploreFilter === c.body ? ' active' : '') + '" title="Show only ' + typeLabel(c.body) + '" onclick="event.stopPropagation(); filterExplore(\'' + c.body + '\')">' + typeLabel(c.body) + '</div>') + '</div>' +
     '<div class="vsub">' + esc(c.year || '—') + ' &bull; ' + esc(c.color_name || '') + '</div>' +
     '<div class="vdata"><div><div class="k">Bought</div><div class="v">' + esc(c.owned_from || '—') + '</div></div>' +
     '<div><div class="k">Sold</div><div class="v">' + sold + '</div></div>' +
@@ -677,6 +691,56 @@ function openModal() {
   document.getElementById('modal').classList.remove('hidden');
 }
 function closeModal() { document.getElementById('modal').classList.add('hidden'); }
+function openDetail(id) {
+  const c = findCar(id);
+  if (!c) return;
+  const r = resolveColor(c.color_name);
+  const hex = c.color_hex || r.hex;
+  const sold = c.owned_to ? esc(c.owned_to) : 'Present';
+  
+  const detailBody = document.getElementById('detailBody');
+  detailBody.innerHTML = '<div style="display:flex; flex-direction:column; gap:20px;">' +
+    '<div style="position:relative; height:240px; display:grid; place-items:center; background:linear-gradient(160deg, var(--bay-1), var(--bay-2)); border-radius:12px; overflow:hidden;">' +
+      '<img class="car-photo" src="' + carPhotoUrl(c) + '" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';" />' +
+      '<div class="illus" style="display:none; width:80%;">' + carSVG(c.body, hex, "d" + c.id) + '</div>' +
+    '</div>' +
+    '<div>' +
+      '<div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">' +
+        '<h3 style="font-family:var(--display); font-size:24px; font-weight:600; color:var(--ink);">' + esc(c.make) + ' ' + esc(c.model) + '</h3>' +
+        '<span style="font-size:10px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); background:var(--field); border-radius:16px; padding:5px 11px;">' + typeLabel(c.body) + '</span>' +
+      '</div>' +
+      '<div style="color:var(--muted); font-size:14px; margin-top:4px;">' +
+        'Year: <strong>' + esc(c.year || '—') + '</strong> &bull; Color: <strong>' + esc(c.color_name || '—') + '</strong>' +
+      '</div>' +
+    '</div>' +
+    '<div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; padding:16px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line);">' +
+      '<div>' +
+        '<div style="font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted-2); font-weight:600;">Bought</div>' +
+        '<div style="font-size:15px; font-weight:600; color:var(--ink); margin-top:4px;">' + esc(c.owned_from || '—') + '</div>' +
+      '</div>' +
+      '<div>' +
+        '<div style="font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted-2); font-weight:600;">Sold</div>' +
+        '<div style="font-size:15px; font-weight:600; color:var(--ink); margin-top:4px;">' + sold + '</div>' +
+      '</div>' +
+      '<div>' +
+        '<div style="font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted-2); font-weight:600;">Curator</div>' +
+        '<div style="font-size:15px; font-weight:600; color:var(--blue); margin-top:4px;">' + esc(c.curator_name || 'A collector') + '</div>' +
+      '</div>' +
+    '</div>' +
+    (c.description ? '<div>' +
+      '<h4 style="font-family:var(--display); font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted-2); font-weight:600; margin-bottom:6px;">Description</h4>' +
+      '<p style="color:var(--ink-2); font-size:14.5px; line-height:1.6; white-space:pre-wrap;">' + esc(c.description) + '</p>' +
+    '</div>' : '') +
+    (c.story ? '<div style="background:var(--blue-soft); border-left:4px solid var(--blue); border-radius:0 12px 12px 0; padding:16px 18px; margin-top:4px;">' +
+      '<h4 style="font-family:var(--display); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--blue); font-weight:700; margin-bottom:8px;">History & Anecdotes</h4>' +
+      '<p style="color:var(--ink-2); font-size:14.5px; font-style:italic; line-height:1.6; white-space:pre-wrap;">\"' + esc(c.story) + '\"</p>' +
+    '</div>' : '') +
+  '</div>';
+  document.getElementById('detailModal').classList.remove('hidden');
+}
+function closeDetailModal() {
+  document.getElementById('detailModal').classList.add('hidden');
+}
 function setVis(v) { pickedVis = v; document.querySelectorAll('.sg').forEach(b => b.classList.toggle('active', b.dataset.v === v)); }
 function syncColor() { document.getElementById('colorChip').style.background = resolveColor(document.getElementById('m-color').value).hex; }
 
