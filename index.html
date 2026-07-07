@@ -266,7 +266,7 @@
 <div id="view-showroom" class="hidden">
   <div class="show-page">
     <div class="show-nav">
-      <button class="navlink" onclick="goCollection()">&larr; Back to dashboard</button>
+      <button class="navlink" onclick="backFromShowroom()">&larr; Back to dashboard</button>
       <div class="title">Virtual Showroom</div>
       <div class="toggle-mini"><button class="active" data-mode="photo" onclick="setMode('photo')">Photo</button><button data-mode="illus" onclick="setMode('illus')">Illustration</button></div>
     </div>
@@ -281,7 +281,18 @@
       <div class="brand" onclick="goCollection()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 13l2-5.2A2 2 0 0 1 6.9 6.5h10.2a2 2 0 0 1 1.9 1.3L21 13"/><path d="M4 13h16v4a1 1 0 0 1-1 1h-1.5a1 1 0 0 1-1-1v-1H7.5v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><circle cx="7.5" cy="14.4" r="1.1"/><circle cx="16.5" cy="14.4" r="1.1"/></svg><b>My Life in Cars</b></div>
       <div class="nav-right"><div class="toggle-mini"><button class="active" data-mode="photo" onclick="setMode('photo')">Photo</button><button data-mode="illus" onclick="setMode('illus')">Illustration</button></div><button class="navlink" id="exploreBack" onclick="backFromExplore()">My collection</button></div>
     </div>
-    <div class="page-head"><div><h2>Public Garages</h2><div class="sub">Collections others have chosen to share.</div></div></div>
+    <div class="page-head">
+      <div><h2>Public Garages</h2><div class="sub">Collections others have chosen to share.</div></div>
+      <div class="head-actions">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <label for="m-owner" style="margin: 0; white-space: nowrap; font-size: 11px;">Curator:</label>
+          <select id="m-owner" onchange="filterExploreOwner(this.value)" style="width: auto; padding: 6px 32px 6px 12px; font-size: 13px; height: 38px;">
+            <option value="">All Curators</option>
+          </select>
+        </div>
+        <button class="btn btn-outline" onclick="openShowroom('explore')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-6h6v6"/></svg> View Showroom</button>
+      </div>
+    </div>
   </div>
   <div class="band"></div>
   <div class="wrap"><div class="grid" id="exploreGrid"></div></div>
@@ -426,7 +437,7 @@ function carSVG(type, color, uid) {
 }
 
 /* ===== State ===== */
-let currentUser = null, myCars = [], exploreCars = [], exploreFilter = null, editingId = null, pickedVis = 'private', viewMode = 'photo', cameFrom = 'collection';
+let currentUser = null, myCars = [], exploreCars = [], exploreFilter = null, exploreOwnerFilter = null, editingId = null, pickedVis = 'private', viewMode = 'photo', cameFrom = 'collection', showroomSource = 'collection';
 function currentName() { if (!currentUser) return 'You'; const m = currentUser.user_metadata || {}; return m.display_name || m.full_name || m.name || (currentUser.email || 'You').split('@')[0]; }
 function isManager() { if (!currentUser) return false; const m = currentUser.user_metadata || {}; const hay = [m.display_name, m.full_name, m.name, currentUser.email].filter(Boolean).join(' ').toLowerCase(); return hay.indexOf('manager') !== -1; }
 function findCar(id) { return myCars.find(x => x.id === id) || exploreCars.find(x => x.id === id); }
@@ -505,7 +516,7 @@ function vcard(c, own) {
     : '';
   const visBadge = own
     ? '<div class="vis ' + (c.is_public ? 'pub' : '') + '" title="Click to ' + (c.is_public ? 'make private' : 'publish') + '" onclick="togglePublic(\'' + c.id + '\',' + (!c.is_public) + ')"><span class="dot"></span>' + (c.is_public ? 'Public' : 'Private') + '</div>'
-    : '<div class="vis" style="cursor:default">' + esc(c.curator_name || 'A collector') + '</div>';
+    : '<div class="vis pub" title="Show only ' + esc(c.curator_name || 'this collector') + '\'s collection" onclick="filterExploreOwner(\'' + esc(c.user_id || c.curator_name || '') + '\')"><span class="dot"></span>' + esc(c.curator_name || 'A collector') + '</div>';
   const mgr = isManager()
     ? '<div class="mgr' + (own ? ' own' : '') + '">' + (own ? '' : '<button class="mtag del" onclick="managerDelete(\'' + c.id + '\')">Delete</button>') + '<button class="mtag ref" onclick="refreshPhotos(\'' + c.id + '\')">Refresh</button></div>'
     : '';
@@ -527,16 +538,36 @@ function vcard(c, own) {
 async function togglePublic(id, mk) { const { error } = await sb.from('cars').update({ is_public: mk }).eq('id', id); if (error) { alert(error.message); return; } await loadMyCars(); }
 
 /* ===== Showroom timeline ===== */
-function openShowroom() {
+function openShowroom(source) {
+  showroomSource = source || 'collection';
   showView('showroom');
   const t = document.getElementById('timeline');
-  const cars = myCars.slice().sort((a, b) => (parseInt(a.year) || 9999) - (parseInt(b.year) || 9999));
-  if (!cars.length) { t.innerHTML = '<div style="color:var(--muted);padding:40px">No cars yet — add some from your collection.</div>'; return; }
+  let cars = [];
+  if (showroomSource === 'explore') {
+    cars = exploreCars.slice();
+    if (exploreFilter) {
+      cars = cars.filter(c => c.body === exploreFilter);
+    }
+    if (exploreOwnerFilter) {
+      cars = cars.filter(c => c.user_id === exploreOwnerFilter);
+    }
+  } else {
+    cars = myCars.slice();
+  }
+  cars.sort((a, b) => (parseInt(a.year) || 9999) - (parseInt(b.year) || 9999));
+  if (!cars.length) { t.innerHTML = '<div style="color:var(--muted);padding:40px">No cars match — add some or change filters.</div>'; return; }
   t.innerHTML = cars.map(c => {
     const r = resolveColor(c.color_name); const hex = c.color_hex || r.hex;
     return '<div class="tcar"><div class="frame"><img class="car-photo" src="' + carPhotoUrl(c) + '" alt="" loading="lazy" onerror="this.classList.add(\'failed\')" /><div class="illus">' + carSVG(c.body, hex, 't' + c.id) + '</div></div>' +
       '<div class="cap">' + esc(c.make) + ' ' + esc(c.model) + '</div><div class="yr">' + esc(c.year || '—') + '</div></div>';
   }).join('');
+}
+function backFromShowroom() {
+  if (showroomSource === 'explore') {
+    showView('explore');
+  } else {
+    goCollection();
+  }
 }
 
 /* ===== Explore ===== */
@@ -549,21 +580,70 @@ async function openExplore() {
   if (error) { g.innerHTML = '<div class="empty"><h3>Couldn\'t load public cars</h3><p>' + esc(error.message) + '</p></div>'; return; }
   if (!data || !data.length) { g.innerHTML = '<div class="empty"><h3>No public cars yet</h3><p>Be the first to publish one.</p></div>'; return; }
   exploreCars = data;
-  exploreCars = data;
   exploreFilter = null;
+  exploreOwnerFilter = null;
+  
+  // Populate owner dropdown
+  const ownerSel = document.getElementById('m-owner');
+  if (ownerSel) {
+    ownerSel.innerHTML = '<option value="">All Curators</option>';
+    const seen = new Set();
+    exploreCars.forEach(c => {
+      const uid = c.user_id;
+      const name = c.curator_name || 'A collector';
+      if (uid && !seen.has(uid)) {
+        seen.add(uid);
+        const opt = document.createElement('option');
+        opt.value = uid;
+        opt.textContent = name;
+        ownerSel.appendChild(opt);
+      }
+    });
+  }
   renderExplore();
 }
 function renderExplore() {
   const g = document.getElementById('exploreGrid');
-  let list = exploreFilter ? exploreCars.filter(c => c.body === exploreFilter) : exploreCars;
-  let bar = exploreFilter
-    ? '<div class="filterbar">Showing ' + typeLabel(exploreFilter) + ' only <button onclick="filterExplore(\'' + exploreFilter + '\')">Show all</button></div>'
-    : '';
-  if (!list.length) { g.innerHTML = bar + '<div class="empty"><h3>Nothing to show</h3><p>No cars of that type here yet.</p></div>'; return; }
+  let list = exploreCars;
+  if (exploreFilter) {
+    list = list.filter(c => c.body === exploreFilter);
+  }
+  if (exploreOwnerFilter) {
+    list = list.filter(c => c.user_id === exploreOwnerFilter);
+  }
+  
+  let activeFilters = [];
+  if (exploreFilter) { activeFilters.push(typeLabel(exploreFilter)); }
+  if (exploreOwnerFilter) {
+    const ownerName = (exploreCars.find(c => c.user_id === exploreOwnerFilter) || {}).curator_name || 'selected curator';
+    activeFilters.push('Curator: ' + ownerName);
+  }
+  
+  let bar = '';
+  if (activeFilters.length > 0) {
+    bar = '<div class="filterbar">Showing ' + activeFilters.join(' &bull; ') + ' only <button onclick="clearExploreFilters()">Show all</button></div>';
+  }
+  
+  if (!list.length) { g.innerHTML = bar + '<div class="empty"><h3>Nothing to show</h3><p>No cars match the active filters.</p></div>'; return; }
   g.innerHTML = bar + list.map(c => vcard(c, false)).join('');
 }
 function filterExplore(type) {
   exploreFilter = (exploreFilter === type) ? null : type;
+  renderExplore();
+}
+function filterExploreOwner(ownerId) {
+  exploreOwnerFilter = ownerId || null;
+  const ownerSel = document.getElementById('m-owner');
+  if (ownerSel) {
+    ownerSel.value = ownerId || '';
+  }
+  renderExplore();
+}
+function clearExploreFilters() {
+  exploreFilter = null;
+  exploreOwnerFilter = null;
+  const ownerSel = document.getElementById('m-owner');
+  if (ownerSel) { ownerSel.value = ''; }
   renderExplore();
 }
 function backFromExplore() { showView(currentUser ? 'collection' : 'login'); }
