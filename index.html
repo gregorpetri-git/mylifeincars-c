@@ -72,9 +72,13 @@
 
   /* ---------- Auth / Garage Access ---------- */
   .auth-page { min-height: 100vh; display: flex; flex-direction: column; }
-  .auth-bg { flex: 1; position: relative; display: grid; place-items: start center; padding: 56px 24px;
-    background: linear-gradient(rgba(243, 245, 248, 0.22), rgba(243, 245, 248, 0.45)), var(--atrium); background-size: cover; background-position: center 32%; }
+  .auth-bg { flex: 1; position: relative; display: grid; place-items: center; padding: 56px 24px;
+    background: linear-gradient(rgba(243, 245, 248, 0.22), rgba(243, 245, 248, 0.45)), var(--atrium); background-size: cover; background-position: center; background-attachment: fixed; }
   .auth-card { width: 100%; max-width: 420px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.45); border-radius: 20px; padding: 40px 38px; box-shadow: 0 30px 80px -30px rgba(38,34,32,0.25); }
+  .landing-state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; text-align: center; }
+  .landing-logo-btn { display: flex; align-items: center; gap: 12px; padding: 16px 28px; font-family: var(--display); font-size: 17px; font-weight: 600; color: var(--navy); background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(255, 255, 255, 0.55); border-radius: 30px; backdrop-filter: blur(12px); box-shadow: 0 20px 40px rgba(38,34,32,0.06); cursor: pointer; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+  .landing-logo-btn:hover { transform: scale(1.03) translateY(-2px); border-color: var(--blue); box-shadow: 0 30px 60px rgba(38,34,32,0.15); }
+  .landing-logo-btn svg { color: var(--navy); }
   .auth-card h1 { font-family: var(--display); font-weight: 700; font-size: 30px; text-align: center; letter-spacing: -0.01em; }
   .auth-card .tag { text-align: center; color: var(--muted); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; margin-top: 8px; margin-bottom: 28px; }
   .tabs { display: flex; gap: 26px; border-bottom: 1px solid var(--line); margin-bottom: 26px; }
@@ -106,7 +110,7 @@
   .page-head .sub { color: var(--muted); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; margin-top: 12px; }
   .head-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 
-  .band { height: 260px; background: linear-gradient(rgba(243, 245, 248, 0.2), rgba(243, 245, 248, 0.45)), var(--atrium); background-size: cover; background-position: center 30%; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .band { height: 260px; background: linear-gradient(rgba(243, 245, 248, 0.22), rgba(243, 245, 248, 0.45)), var(--atrium); background-size: cover; background-position: center; background-attachment: fixed; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 26px; padding: 34px 0 90px; }
 
@@ -212,6 +216,18 @@
   #view-explore .nav { background: rgba(255, 255, 255, 0.9) !important; border-color: rgba(255, 255, 255, 0.5) !important; }
   #view-explore .page-head { background: #ffffff !important; }
   #view-explore .grid { background: #ffffff !important; }
+  .filterbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; width: 100%; grid-column: 1 / -1; font-size: 13px; color: var(--muted); }
+  .filter-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--field); border: 1px solid var(--line-2); padding: 5px 12px; border-radius: 20px; font-weight: 600; color: var(--ink-2); font-size: 12px; }
+  .filter-chip button { background: none; border: none; font-size: 14px; font-weight: bold; cursor: pointer; color: var(--muted); line-height: 1; transition: color 0.15s; display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; padding: 0; }
+  .filter-chip button:hover { color: var(--danger); background: rgba(0,0,0,0.05); }
+  .clear-all-filters { background: none; border: none; color: var(--blue); cursor: pointer; font-weight: 600; font-size: 12px; transition: color 0.15s; margin-left: 4px; }
+  .clear-all-filters:hover { text-decoration: underline; color: var(--navy); }
+  .showroom-detail-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.55); border-radius: 20px; padding: 32px; margin-top: 20px; margin-bottom: 50px; box-shadow: 0 20px 50px -15px rgba(38,34,32,0.08); min-height: 250px; }
+  .showroom-detail-grid { display: grid; grid-template-columns: 1.2fr 1.5fr; gap: 38px; }
+  @media (max-width: 768px) { .showroom-detail-grid { grid-template-columns: 1fr; gap: 24px; } }
+  .tcar { cursor: pointer; }
+  .tcar.selected .frame { border-color: var(--blue) !important; box-shadow: 0 0 0 3px rgba(163, 123, 84, 0.4), 0 20px 40px -15px rgba(38,34,32,0.25) !important; transform: translateY(-4px); }
+  .show-filters-bar select { width: auto; padding: 6px 28px 6px 12px; font-size: 12px; height: 32px; border-radius: 6px; border: 1px solid var(--line-2); background-color: rgba(255, 255, 255, 0.85); }
 </style>
 </head>
 <body>
@@ -229,9 +245,20 @@
 <!-- ============ GARAGE ACCESS (login) ============ -->
 <div id="view-login" class="hidden">
   <div class="auth-page">
-    <div class="wrap"><div class="nav"><div class="brand"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 13l2-5.2A2 2 0 0 1 6.9 6.5h10.2a2 2 0 0 1 1.9 1.3L21 13"/><path d="M4 13h16v4a1 1 0 0 1-1 1h-1.5a1 1 0 0 1-1-1v-1H7.5v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><circle cx="7.5" cy="14.4" r="1.1"/><circle cx="16.5" cy="14.4" r="1.1"/></svg><b>My Life in Cars</b></div></div></div>
+    <div id="auth-nav" class="wrap hidden"><div class="nav"><div class="brand"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 13l2-5.2A2 2 0 0 1 6.9 6.5h10.2a2 2 0 0 1 1.9 1.3L21 13"/><path d="M4 13h16v4a1 1 0 0 1-1 1h-1.5a1 1 0 0 1-1-1v-1H7.5v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><circle cx="7.5" cy="14.4" r="1.1"/><circle cx="16.5" cy="14.4" r="1.1"/></svg><b>My Life in Cars</b></div></div></div>
     <div class="auth-bg">
-      <div class="auth-card">
+      
+      <!-- Landing Entrance State -->
+      <div id="landing-state" class="landing-state">
+        <button class="landing-logo-btn" onclick="openLoginCard()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 13l2-5.2A2 2 0 0 1 6.9 6.5h10.2a2 2 0 0 1 1.9 1.3L21 13"/><path d="M4 13h16v4a1 1 0 0 1-1 1h-1.5a1 1 0 0 1-1-1v-1H7.5v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><circle cx="7.5" cy="14.4" r="1.1"/><circle cx="16.5" cy="14.4" r="1.1"/></svg>
+          <span>My Life in Cars</span>
+        </button>
+      </div>
+
+      <!-- Login Card State -->
+      <div id="login-card-state" class="auth-card hidden">
+        <button class="navlink" onclick="closeLoginCard()" style="margin-bottom: 20px; display: inline-flex; align-items: center; gap: 6px;">&larr; Back to Entrance</button>
         <h1>Garage Access</h1>
         <div class="tag">Enter your digital showroom</div>
         <div class="tabs">
@@ -253,6 +280,7 @@
         <button class="btn btn-dark" style="width:100%;justify-content:center" id="authBtn" onclick="submitAuth()">Enter Garage</button>
         <div class="ordiv"><span>or</span></div>
         <button class="btn btn-google" onclick="signInWithGoogle()"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continue with Google</button>
+        <button class="btn btn-outline" style="width:100%;justify-content:center;margin-top:12px;border-radius:10px" onclick="openExplore()">Browse Public Garages</button>
         <div class="err" id="authErr"></div>
       </div>
     </div>
@@ -283,13 +311,26 @@
 
 <!-- ============ VIRTUAL SHOWROOM ============ -->
 <div id="view-showroom" class="hidden">
-  <div class="show-page">
+  <div class="show-page" style="display: flex; flex-direction: column;">
     <div class="show-nav">
       <button class="navlink" onclick="backFromShowroom()">&larr; Back to dashboard</button>
       <div class="title">Virtual Showroom</div>
       <div class="toggle-mini"><button class="active" data-mode="photo" onclick="setMode('photo')">Photo</button><button data-mode="illus" onclick="setMode('illus')">Illustration</button></div>
     </div>
+    
+    <!-- Showroom filters row -->
+    <div class="show-filters-bar">
+      <div class="wrap" style="display: flex; gap: 12px; align-items: center; justify-content: flex-end; padding: 16px 28px 0; flex-wrap: wrap;" id="showroomFilters">
+      </div>
+    </div>
+    
     <div class="timeline-scroll"><div class="timeline" id="timeline"></div></div>
+    
+    <!-- Dynamic Showroom Details Panel -->
+    <div class="wrap" style="padding-bottom: 50px; width: 100%;">
+      <div id="showroom-details-panel" class="showroom-detail-card">
+      </div>
+    </div>
   </div>
 </div>
 
@@ -467,17 +508,34 @@ function carSVG(type, color, uid) {
   return '<svg viewBox="0 0 480 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + light + '"/><stop offset="0.5" stop-color="' + color + '"/><stop offset="1" stop-color="' + dark + '"/></linearGradient></defs><ellipse cx="240" cy="178" rx="196" ry="11" fill="#9aa1ab" opacity="0.4"/><path d="' + cfg.body + '" fill="url(#' + gid + ')" stroke="' + edge + '" stroke-width="1.1"/><path d="' + cfg.glass + '" fill="#11151c" opacity="0.82"/><ellipse cx="210" cy="92" rx="150" ry="24" fill="#fff" opacity="0.12"/><ellipse cx="' + fl.x + '" cy="' + fl.y + '" rx="5" ry="4" fill="#fff7e0"/><rect x="' + (rl.x - 3) + '" y="' + (rl.y - 4) + '" width="5" height="8" rx="1.5" fill="#d24539"/>' + wheels + '</svg>';
 }
 
-/* ===== State ===== */
-let currentUser = null, myCars = [], exploreCars = [], exploreFilter = null, exploreOwnerFilter = null, editingId = null, pickedVis = 'private', viewMode = 'photo', cameFrom = 'collection', showroomSource = 'collection';
+let currentUser = null, myCars = [], exploreCars = [], exploreFilter = null, exploreOwnerFilter = null, exploreYearFilter = null, editingId = null, pickedVis = 'private', viewMode = 'photo', cameFrom = 'collection', showroomSource = 'collection';
+let showroomFilterType = null, showroomFilterOwner = null, showroomFilterYear = null, selectedShowroomCarId = null, showroomCars = [];
 function currentName() { if (!currentUser) return 'You'; const m = currentUser.user_metadata || {}; return m.display_name || m.full_name || m.name || (currentUser.email || 'You').split('@')[0]; }
 function isManager() { if (!currentUser) return false; const m = currentUser.user_metadata || {}; const hay = [m.display_name, m.full_name, m.name, currentUser.email].filter(Boolean).join(' ').toLowerCase(); return hay.indexOf('manager') !== -1; }
 function findCar(id) { return myCars.find(x => x.id === id) || exploreCars.find(x => x.id === id); }
 function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 function typeLabel(v) { const m = { sedan: 'Sedan', coupe: 'Coupe', sports: 'Sports', suv: 'SUV', hatchback: 'Hatchback', convertible: 'Convertible', wagon: 'Wagon', pickup: 'Pickup', van: 'Van' }; return m[v] || 'Car'; }
-function showView(v) { ['setup', 'login', 'collection', 'showroom', 'explore'].forEach(x => document.getElementById('view-' + x).classList.add('hidden')); document.getElementById('view-' + v).classList.remove('hidden'); window.scrollTo(0, 0); }
+function showView(v) {
+  ['setup', 'login', 'collection', 'showroom', 'explore'].forEach(x => document.getElementById('view-' + x).classList.add('hidden'));
+  document.getElementById('view-' + v).classList.remove('hidden');
+  window.scrollTo(0, 0);
+  if (v === 'login') {
+    closeLoginCard();
+  }
+}
 function setMode(m) { viewMode = m; document.body.classList.toggle('mode-illus', m === 'illus'); document.querySelectorAll('.toggle-mini button').forEach(b => b.classList.toggle('active', b.dataset.mode === m)); }
 
 /* ===== Auth ===== */
+function openLoginCard() {
+  document.getElementById('landing-state').classList.add('hidden');
+  document.getElementById('login-card-state').classList.remove('hidden');
+  document.getElementById('auth-nav').classList.remove('hidden');
+}
+function closeLoginCard() {
+  document.getElementById('landing-state').classList.remove('hidden');
+  document.getElementById('login-card-state').classList.add('hidden');
+  document.getElementById('auth-nav').classList.add('hidden');
+}
 let authMode = 'login';
 function setAuthTab(mode) {
   authMode = mode;
@@ -551,6 +609,8 @@ function vcard(c, own) {
   const mgr = isManager()
     ? '<div class="mgr' + (own ? ' own' : '') + '">' + (own ? '' : '<button class="mtag del" onclick="event.stopPropagation(); managerDelete(\'' + c.id + '\')">Delete</button>') + '<button class="mtag ref" onclick="event.stopPropagation(); refreshPhotos(\'' + c.id + '\')">Refresh</button></div>'
     : '';
+  const yrStyle = 'cursor:pointer; padding:2px 6px; border-radius:4px; font-weight:600; font-size:11px; transition:all 0.15s; ' + (exploreYearFilter === c.year ? 'background:var(--blue); color:#fff;' : 'background:var(--field); color:var(--muted);');
+  const yrHtml = own ? esc(c.year || '—') : '<span style="' + yrStyle + '" onclick="event.stopPropagation(); filterExploreYear(\'' + esc(c.year || '') + '\')">' + esc(c.year || '—') + '</span>';
   return '<div class="vcard">' +
     '<div class="vphoto" onclick="openDetail(\'' + c.id + '\')" style="cursor:pointer">' + visBadge + topRight + mgr +
     '<img class="car-photo" id="ph-' + c.id + '" src="' + carPhotoUrl(c, '23') + '" alt="' + esc(c.make + ' ' + c.model) + '" loading="lazy" onerror="this.classList.add(\'failed\')" />' +
@@ -558,7 +618,7 @@ function vcard(c, own) {
     '<div class="angles">' + THUMB_ANGLES.map(function (a) { return '<img class="thumb" src="' + carPhotoUrl(c, a) + '" loading="lazy" onclick="event.stopPropagation(); swapPhoto(\'' + c.id + '\', this.src)" onerror="this.remove()" />'; }).join('') + '</div></div>' +
     '<div class="vbody" onclick="openDetail(\'' + c.id + '\')" style="cursor:pointer">' +
     '<div class="vtop"><div class="vname">' + esc(c.make) + ' ' + esc(c.model) + '</div>' + (own ? '<div class="vtype">' + typeLabel(c.body) + '</div>' : '<div class="vtype clickable' + (exploreFilter === c.body ? ' active' : '') + '" title="Show only ' + typeLabel(c.body) + '" onclick="event.stopPropagation(); filterExplore(\'' + c.body + '\')">' + typeLabel(c.body) + '</div>') + '</div>' +
-    '<div class="vsub">' + esc(c.year || '—') + ' &bull; ' + esc(c.color_name || '') + '</div>' +
+    '<div class="vsub">' + yrHtml + ' &bull; ' + esc(c.color_name || '') + '</div>' +
     '<div class="vdata"><div><div class="k">Bought</div><div class="v">' + esc(c.owned_from || '—') + '</div></div>' +
     '<div><div class="k">Sold</div><div class="v">' + sold + '</div></div>' +
     '<div><div class="k">Ownership</div><div class="v">' + ownership(c) + '</div></div></div>' +
@@ -571,28 +631,198 @@ async function togglePublic(id, mk) { const { error } = await sb.from('cars').up
 /* ===== Showroom timeline ===== */
 function openShowroom(source) {
   showroomSource = source || 'collection';
-  showView('showroom');
-  const t = document.getElementById('timeline');
-  let cars = [];
+  
+  // Pre-load filters from explore if coming from explore
   if (showroomSource === 'explore') {
-    cars = exploreCars.slice();
-    if (exploreFilter) {
-      cars = cars.filter(c => c.body === exploreFilter);
-    }
-    if (exploreOwnerFilter) {
-      cars = cars.filter(c => c.user_id === exploreOwnerFilter);
-    }
+    showroomFilterType = exploreFilter;
+    showroomFilterOwner = exploreOwnerFilter;
+    showroomFilterYear = exploreYearFilter;
   } else {
-    cars = myCars.slice();
+    showroomFilterType = null;
+    showroomFilterOwner = null;
+    showroomFilterYear = null;
   }
-  cars.sort((a, b) => (parseInt(a.year) || 9999) - (parseInt(b.year) || 9999));
-  if (!cars.length) { t.innerHTML = '<div style="color:var(--muted);padding:40px">No cars match — add some or change filters.</div>'; return; }
-  t.innerHTML = cars.map(c => {
+  
+  selectedShowroomCarId = null;
+  showView('showroom');
+  initShowroomFilters();
+  renderShowroom();
+}
+
+function initShowroomFilters() {
+  const container = document.getElementById('showroomFilters');
+  const baseList = showroomSource === 'explore' ? exploreCars : myCars;
+  
+  const types = new Set();
+  const curators = new Map();
+  const years = new Set();
+  
+  baseList.forEach(c => {
+    if (c.body) types.add(c.body);
+    if (c.year) years.add(c.year);
+    if (showroomSource === 'explore' && c.user_id) {
+      curators.set(c.user_id, c.curator_name || 'A collector');
+    }
+  });
+  
+  const sortedYears = Array.from(years).sort((a, b) => parseInt(a) - parseInt(b));
+  
+  let html = '';
+  
+  // Type Dropdown Select
+  html += '<select id="sh-type" onchange="showroomFilterChanged(\'type\', this.value)">' +
+          '<option value="">All Types</option>' +
+          Array.from(types).map(t => '<option value="' + t + '"' + (showroomFilterType === t ? ' selected' : '') + '>' + typeLabel(t) + '</option>').join('') +
+          '</select>';
+          
+  // Curator Dropdown Select (Explore only)
+  if (showroomSource === 'explore') {
+    html += '<select id="sh-owner" onchange="showroomFilterChanged(\'owner\', this.value)">' +
+            '<option value="">All Curators</option>' +
+            Array.from(curators.entries()).map(([uid, name]) => '<option value="' + uid + '"' + (showroomFilterOwner === uid ? ' selected' : '') + '>' + name + '</option>').join('') +
+            '</select>';
+  }
+  
+  // Year Dropdown Select
+  html += '<select id="sh-year" onchange="showroomFilterChanged(\'year\', this.value)">' +
+          '<option value="">All Years</option>' +
+          sortedYears.map(yr => '<option value="' + yr + '"' + (showroomFilterYear === yr ? ' selected' : '') + '>' + yr + '</option>').join('') +
+          '</select>';
+          
+  container.innerHTML = html;
+}
+
+function showroomFilterChanged(filterType, value) {
+  if (filterType === 'type') showroomFilterType = value || null;
+  if (filterType === 'owner') showroomFilterOwner = value || null;
+  if (filterType === 'year') showroomFilterYear = value || null;
+  
+  selectedShowroomCarId = null;
+  renderShowroom();
+}
+
+function renderShowroom() {
+  const t = document.getElementById('timeline');
+  const baseList = showroomSource === 'explore' ? exploreCars : myCars;
+  
+  let list = baseList.slice();
+  if (showroomFilterType) {
+    list = list.filter(c => c.body === showroomFilterType);
+  }
+  if (showroomSource === 'explore' && showroomFilterOwner) {
+    list = list.filter(c => c.user_id === showroomFilterOwner);
+  }
+  if (showroomFilterYear) {
+    list = list.filter(c => c.year == showroomFilterYear);
+  }
+  
+  list.sort((a, b) => (parseInt(a.year) || 9999) - (parseInt(b.year) || 9999));
+  showroomCars = list;
+  
+  if (!list.length) {
+    t.innerHTML = '<div style="color:var(--muted);padding:40px">No vehicles match the active showroom filters.</div>';
+    renderShowroomDetail(null);
+    return;
+  }
+  
+  t.innerHTML = list.map(c => {
     const r = resolveColor(c.color_name); const hex = c.color_hex || r.hex;
-    return '<div class="tcar"><div class="frame"><img class="car-photo" src="' + carPhotoUrl(c) + '" alt="" loading="lazy" onerror="this.classList.add(\'failed\')" /><div class="illus">' + carSVG(c.body, hex, 't' + c.id) + '</div></div>' +
+    const isSelected = selectedShowroomCarId === c.id;
+    return '<div class="tcar' + (isSelected ? ' selected' : '') + '" onclick="selectShowroomCar(\'' + c.id + '\')">' +
+      '<div class="frame"><img class="car-photo" id="tph-' + c.id + '" src="' + carPhotoUrl(c, '23') + '" alt="" loading="lazy" onerror="this.classList.add(\'failed\')" /><div class="illus">' + carSVG(c.body, hex, 't' + c.id) + '</div></div>' +
       '<div class="cap">' + esc(c.make) + ' ' + esc(c.model) + '</div><div class="yr">' + esc(c.year || '—') + '</div></div>';
   }).join('');
+  
+  // Auto-select the first vehicle in the timeline
+  if (!selectedShowroomCarId && list.length > 0) {
+    selectShowroomCar(list[0].id);
+  } else if (selectedShowroomCarId) {
+    const currentlySelected = list.find(x => x.id === selectedShowroomCarId);
+    if (currentlySelected) {
+      selectShowroomCar(selectedShowroomCarId);
+    } else {
+      selectShowroomCar(list[0].id);
+    }
+  }
 }
+
+function selectShowroomCar(id) {
+  selectedShowroomCarId = id;
+  const cards = document.querySelectorAll('.tcar');
+  showroomCars.forEach((c, idx) => {
+    if (cards[idx]) {
+      cards[idx].classList.toggle('selected', c.id === id);
+    }
+  });
+  
+  const activeCar = showroomCars.find(x => x.id === id);
+  renderShowroomDetail(activeCar);
+}
+
+function renderShowroomDetail(c) {
+  const panel = document.getElementById('showroom-details-panel');
+  if (!c) {
+    panel.innerHTML = '<div style="text-align:center;color:var(--muted);padding:40px;font-family:var(--display);font-size:16px;">Select a vehicle from the timeline above to view its details.</div>';
+    return;
+  }
+  
+  const r = resolveColor(c.color_name);
+  const hex = c.color_hex || r.hex;
+  const sold = c.owned_to ? esc(c.owned_to) : 'Present';
+  
+  panel.innerHTML = '<div class="showroom-detail-grid">' +
+    '<!-- Left Column: Photo, Thumbnails, Data Grid -->' +
+    '<div style="display:flex; flex-direction:column; gap:20px;">' +
+      '<div style="position:relative; height:240px; display:grid; place-items:center; background:linear-gradient(160deg, var(--bay-1), var(--bay-2)); border-radius:12px; overflow:hidden;">' +
+        '<img class="car-photo" id="ph-show-detail" src="' + carPhotoUrl(c, '23') + '" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';" />' +
+        '<div class="illus" style="display:none; width:80%;">' + carSVG(c.body, hex, "sh" + c.id) + '</div>' +
+      '</div>' +
+      '<div style="display:flex; gap:6px; justify-content:center;">' +
+        THUMB_ANGLES.map(function(a) {
+          return '<img class="thumb" src="' + carPhotoUrl(c, a) + '" loading="lazy" style="width:54px; height:36px; object-fit:contain; background:#fff; border:1px solid var(--line); border-radius:6px; cursor:pointer; padding:2px;" onclick="swapShowroomPhoto(this.src)" onerror="this.remove()" />';
+        }).join('') +
+      '</div>' +
+      '<div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; padding:16px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line);">' +
+        '<div>' +
+          '<div style="font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted-2); font-weight:600;">Bought</div>' +
+          '<div style="font-size:15px; font-weight:600; color:var(--ink); margin-top:4px;">' + esc(c.owned_from || '—') + '</div>' +
+        '</div>' +
+        '<div>' +
+          '<div style="font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted-2); font-weight:600;">Sold</div>' +
+          '<div style="font-size:15px; font-weight:600; color:var(--ink); margin-top:4px;">' + sold + '</div>' +
+        '</div>' +
+        '<div>' +
+          '<div style="font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted-2); font-weight:600;">Curator</div>' +
+          '<div style="font-size:15px; font-weight:600; color:var(--blue); margin-top:4px;">' + esc(c.curator_name || 'A collector') + '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<!-- Right Column: Description, Story -->' +
+    '<div style="display:flex; flex-direction:column; gap:20px; justify-content:center;">' +
+      '<div>' +
+        '<div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px;">' +
+          '<h3 style="font-family:var(--display); font-size:26px; font-weight:700; color:var(--ink); line-height:1.2;">' + esc(c.make) + ' ' + esc(c.model) + '</h3>' +
+          '<span style="font-size:10px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); background:var(--field); border-radius:16px; padding:5px 11px;">' + typeLabel(c.body) + '</span>' +
+        '</div>' +
+        '<div style="color:var(--muted); font-size:14px; margin-bottom:16px;">' +
+          'Year: <strong>' + esc(c.year || '—') + '</strong> &bull; Color: <strong>' + esc(c.color_name || '—') + '</strong>' +
+        '</div>' +
+        (c.description ? '<h4 style="font-family:var(--display); font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted-2); font-weight:600; margin-bottom:6px;">Description</h4>' +
+          '<p style="color:var(--ink-2); font-size:15px; line-height:1.6; white-space:pre-wrap;">' + esc(c.description) + '</p>' : '') +
+      '</div>' +
+      (c.story ? '<div style="background:var(--blue-soft); border-left:4px solid var(--blue); border-radius:0 12px 12px 0; padding:18px 20px; text-align:left;">' +
+        '<h4 style="font-family:var(--display); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--blue); font-weight:700; margin-bottom:8px;">History & Anecdotes</h4>' +
+        '<p style="color:var(--ink-2); font-size:15px; font-style:italic; line-height:1.6; white-space:pre-wrap;">"' + esc(c.story) + '"</p>' +
+      '</div>' : '') +
+    '</div>' +
+  '</div>';
+}
+
+function swapShowroomPhoto(src) {
+  const img = document.getElementById('ph-show-detail');
+  if (img) img.src = src;
+}
+
 function backFromShowroom() {
   if (showroomSource === 'explore') {
     showView('explore');
@@ -633,6 +863,10 @@ async function openExplore() {
   }
   renderExplore();
 }
+function getOwnerName(uid) {
+  const c = exploreCars.find(x => x.user_id === uid);
+  return c ? (c.curator_name || 'A collector') : 'A collector';
+}
 function renderExplore() {
   const g = document.getElementById('exploreGrid');
   let list = exploreCars;
@@ -642,17 +876,24 @@ function renderExplore() {
   if (exploreOwnerFilter) {
     list = list.filter(c => c.user_id === exploreOwnerFilter);
   }
-  
-  let activeFilters = [];
-  if (exploreFilter) { activeFilters.push(typeLabel(exploreFilter)); }
-  if (exploreOwnerFilter) {
-    const ownerName = (exploreCars.find(c => c.user_id === exploreOwnerFilter) || {}).curator_name || 'selected curator';
-    activeFilters.push('Curator: ' + ownerName);
+  if (exploreYearFilter) {
+    list = list.filter(c => c.year == exploreYearFilter);
   }
   
   let bar = '';
-  if (activeFilters.length > 0) {
-    bar = '<div class="filterbar">Showing ' + activeFilters.join(' &bull; ') + ' only <button onclick="clearExploreFilters()">Show all</button></div>';
+  const hasFilters = exploreFilter || exploreOwnerFilter || exploreYearFilter;
+  if (hasFilters) {
+    let chipsHtml = '';
+    if (exploreFilter) {
+      chipsHtml += '<span class="filter-chip">Type: ' + typeLabel(exploreFilter) + ' <button onclick="filterExplore(\'' + exploreFilter + '\')">&times;</button></span>';
+    }
+    if (exploreOwnerFilter) {
+      chipsHtml += '<span class="filter-chip">Curator: ' + getOwnerName(exploreOwnerFilter) + ' <button onclick="filterExploreOwner(\'\')">&times;</button></span>';
+    }
+    if (exploreYearFilter) {
+      chipsHtml += '<span class="filter-chip">Year: ' + exploreYearFilter + ' <button onclick="filterExploreYear(\'\')">&times;</button></span>';
+    }
+    bar = '<div class="filterbar">Active: ' + chipsHtml + ' <button class="clear-all-filters" onclick="clearExploreFilters()">Clear all</button></div>';
   }
   
   if (!list.length) { g.innerHTML = bar + '<div class="empty"><h3>Nothing to show</h3><p>No cars match the active filters.</p></div>'; return; }
@@ -670,9 +911,14 @@ function filterExploreOwner(ownerId) {
   }
   renderExplore();
 }
+function filterExploreYear(year) {
+  exploreYearFilter = (exploreYearFilter === year) ? null : year;
+  renderExplore();
+}
 function clearExploreFilters() {
   exploreFilter = null;
   exploreOwnerFilter = null;
+  exploreYearFilter = null;
   const ownerSel = document.getElementById('m-owner');
   if (ownerSel) { ownerSel.value = ''; }
   renderExplore();
