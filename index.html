@@ -499,15 +499,15 @@ const ANGLE_VIEWS = [
 const THUMB_ANGLES = ANGLE_VIEWS.map(a => a.key);
 function hashSeed(s) { let h = 2166136261; s = String(s); for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return Math.abs(h) % 100000; }
 const BODY_DESC = {
-  sedan: 'four-door sedan',
-  coupe: 'sleek two-door coupe',
-  sports: 'low-slung sports car',
-  suv: 'tall SUV with high ground clearance and an upright boxy body',
-  hatchback: 'compact hatchback',
-  convertible: 'open-top convertible with the roof folded down and no roof over the cabin',
-  wagon: 'estate station wagon with an extended long roofline',
-  pickup: 'pickup truck with an open rear cargo bed',
-  van: 'tall boxy van MPV people-carrier',
+  sedan: 'four-door sedan with a traditional three-box profile',
+  coupe: 'sleek two-door coupe with a low roofline and fastback or notchback rear',
+  sports: 'low-slung two-door sports car with a wide stance and aggressive aerodynamic body',
+  suv: 'tall high-riding SUV with an upright boxy body, high ground clearance, large wheels, and raised suspension',
+  hatchback: 'compact five-door hatchback with a sloping rear liftgate',
+  convertible: 'open-top convertible with the fabric or hard-top roof completely folded away, no roof structure visible above the beltline, open cabin exposed to the sky',
+  wagon: 'estate station wagon with an extended roofline that continues flat to the rear tailgate',
+  pickup: 'pickup truck with a separate cab and an open rear cargo bed',
+  van: 'tall boxy van or MPV people-carrier with an upright windshield and sliding side doors',
 };
 const TALL_BODIES = { suv: 1, van: 1, pickup: 1 };
 function carPhotoUrl(car, angle) {
@@ -515,12 +515,18 @@ function carPhotoUrl(car, angle) {
   const color = (car.color_name || resolveColor(car.color_name).paint || '').trim();
   const year = car.year ? car.year + ' ' : '';
   const desc = BODY_DESC[car.body] || 'car';
-  const prompt = 'professional studio photograph of a ' + year + (car.make || '') + ' ' + (car.model || '') + ', ' + desc +
-    (color ? ', ' + color + ' paint' : '') + ', ' + view.phrase +
-    ', the entire vehicle from roof to tyres fully visible and in correct proportion, plain white seamless studio background, centered, sharp focus, automotive product photo';
-  const seed = hashSeed((car.id || ((car.make || '') + (car.model || '') + (car.year || ''))) + view.key);
-  const h = TALL_BODIES[car.body] ? '470' : '420';
-  const p = new URLSearchParams({ width: '640', height: h, nologo: 'true', model: 'flux', seed: String(seed) });
+  const make = (car.make || '').trim();
+  const model = (car.model || '').trim();
+  const prompt = 'ultra-realistic product photograph of the exact ' + year + make + ' ' + model +
+    ', a ' + desc +
+    (color ? ', finished in ' + color + ' paint' : '') +
+    ', ' + view.phrase +
+    ', showing the authentic ' + make + ' brand grille design, badge, headlight shape, and body proportions exactly as the real production vehicle' +
+    ', the entire vehicle from roof to tyres fully visible and correctly proportioned' +
+    ', plain white seamless studio background, professional automotive photography, centered composition, sharp focus, 8k detail';
+  const seed = hashSeed((car.id || (make + model + (car.year || ''))) + view.key);
+  const h = TALL_BODIES[car.body] ? '512' : '420';
+  const p = new URLSearchParams({ width: '768', height: h, nologo: 'true', model: 'flux', seed: String(seed) });
   return 'https://image.pollinations.ai/prompt/' + encodeURIComponent(prompt) + '?' + p.toString();
 }
 function swapPhoto(id, src) { const el = document.getElementById('ph-' + id); if (el) el.src = src; }
