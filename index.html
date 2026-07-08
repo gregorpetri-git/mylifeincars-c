@@ -79,7 +79,9 @@
   /* ---------- Auth / Garage Access ---------- */
   .auth-page { min-height: 100vh; display: flex; flex-direction: column; }
   .auth-bg { flex: 1; position: relative; display: grid; place-items: center; padding: 56px 24px;
-    background: linear-gradient(rgba(243, 245, 248, 0.22), rgba(243, 245, 248, 0.45)), var(--atrium); background-size: cover; background-position: center; background-attachment: fixed; }
+    background-color: #e8e6e3;
+    background-image: linear-gradient(rgba(243, 245, 248, 0.18), rgba(243, 245, 248, 0.35)), var(--atrium);
+    background-size: contain; background-repeat: no-repeat; background-position: center; }
   .auth-card { width: 100%; max-width: 420px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.45); border-radius: 20px; padding: 40px 38px; box-shadow: 0 30px 80px -30px rgba(38,34,32,0.25); }
   .landing-state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; text-align: center; }
   .landing-logo-btn { display: flex; align-items: center; gap: 12px; padding: 16px 28px; font-family: var(--display); font-size: 17px; font-weight: 600; color: var(--navy); background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(255, 255, 255, 0.55); border-radius: 30px; backdrop-filter: blur(12px); box-shadow: 0 20px 40px rgba(38,34,32,0.06); cursor: pointer; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
