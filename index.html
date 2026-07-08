@@ -304,16 +304,29 @@
       <div class="nav-right">
         <span class="user" id="userName" style="margin-right: 8px;">—</span>
         <button class="btn btn-outline" style="height:32px; padding:0 14px; font-size:11px; margin-right:8px;" onclick="openExplore()">Public Garages</button>
-        <div class="toggle-mini"><button class="active" data-mode="photo" onclick="setMode('photo')">Photo</button><button data-mode="illus" onclick="setMode('illus')">Illustration</button></div>
-        <button class="logout" onclick="signOut()" style="margin-left: 12px;">Logout</button>
+        <button class="logout" onclick="signOut()">Logout</button>
       </div>
     </div>
     <div class="page-head">
       <div><h2>My Garage</h2><div class="sub" id="collSub">A timeline of your personal automotive history.</div></div>
       <div class="head-actions">
+        <div class="toggle-mini"><button class="active" data-mode="photo" onclick="setMode('photo')">Photo</button><button data-mode="illus" onclick="setMode('illus')">Illustration</button></div>
         <button class="btn btn-outline" onclick="openShowroom()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-6h6v6"/></svg> View Showroom</button>
         <button class="btn btn-dark" onclick="openModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg> Add Vehicle</button>
       </div>
+    </div>
+    
+    <!-- My Garage Filters Row -->
+    <div style="display: flex; gap: 12px; align-items: center; justify-content: space-between; padding: 0 0 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap; margin-bottom: 24px;">
+      <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+        <select id="col-type" onchange="filterCollection(this.value)" style="width: auto; padding: 6px 28px 6px 12px; font-size: 12px; height: 32px; border-radius: 6px; border: 1px solid var(--line-2); background-color: rgba(255, 255, 255, 0.85);">
+          <option value="">All Types</option>
+        </select>
+        <select id="col-year" onchange="filterCollectionYear(this.value)" style="width: auto; padding: 6px 28px 6px 12px; font-size: 12px; height: 32px; border-radius: 6px; border: 1px solid var(--line-2); background-color: rgba(255, 255, 255, 0.85);">
+          <option value="">All Years</option>
+        </select>
+      </div>
+      <button class="btn btn-outline" style="height: 32px; padding: 0 14px; font-size: 11px;" onclick="clearCollectionFilters()">Reset Filters</button>
     </div>
   </div>
   <div class="band"></div>
@@ -358,21 +371,19 @@
     <div class="nav">
       <div class="brand" onclick="goCollection()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 13l2-5.2A2 2 0 0 1 6.9 6.5h10.2a2 2 0 0 1 1.9 1.3L21 13"/><path d="M4 13h16v4a1 1 0 0 1-1 1h-1.5a1 1 0 0 1-1-1v-1H7.5v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><circle cx="7.5" cy="14.4" r="1.1"/><circle cx="16.5" cy="14.4" r="1.1"/></svg><b>My Life in Cars</b></div>
       <div class="nav-right">
+        <span class="user" id="exploreUserName" style="margin-right: 8px;">—</span>
         <button class="btn btn-outline" id="exploreBack" style="height:32px; padding:0 14px; font-size:11px; margin-right:8px;" onclick="backFromExplore()">My Garage</button>
-        <div class="toggle-mini"><button class="active" data-mode="photo" onclick="setMode('photo')">Photo</button><button data-mode="illus" onclick="setMode('illus')">Illustration</button></div>
+        <button class="logout" onclick="signOut()">Logout</button>
       </div>
     </div>
     <div class="page-head">
       <div><h2>Public Garages</h2><div class="sub">Collections shared by other curators.</div></div>
       <div class="head-actions">
+        <div class="toggle-mini"><button class="active" data-mode="photo" onclick="setMode('photo')">Photo</button><button data-mode="illus" onclick="setMode('illus')">Illustration</button></div>
         <button class="btn btn-outline" onclick="openShowroom('explore')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-6h6v6"/></svg> View Showroom</button>
       </div>
     </div>
     
-    </div>
-  </div>
-  <div class="band"></div>
-  <div class="wrap" style="margin-top: 24px;">
     <!-- Explore Filters Row -->
     <div style="display: flex; gap: 12px; align-items: center; justify-content: space-between; padding: 0 0 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap; margin-bottom: 24px;">
       <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
@@ -388,8 +399,9 @@
       </div>
       <button class="btn btn-outline" style="height: 32px; padding: 0 14px; font-size: 11px;" onclick="clearExploreFilters()">Reset Filters</button>
     </div>
-    <div class="grid" id="exploreGrid"></div>
   </div>
+  <div class="band"></div>
+  <div class="wrap"><div class="grid" id="exploreGrid"></div></div>
   <footer>My Life in Cars · v1.4</footer>
 </div>
 
@@ -542,7 +554,7 @@ function carSVG(type, color, uid) {
   return '<svg viewBox="0 0 480 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + light + '"/><stop offset="0.5" stop-color="' + color + '"/><stop offset="1" stop-color="' + dark + '"/></linearGradient></defs><ellipse cx="240" cy="178" rx="196" ry="11" fill="#9aa1ab" opacity="0.4"/><path d="' + cfg.body + '" fill="url(#' + gid + ')" stroke="' + edge + '" stroke-width="1.1"/><path d="' + cfg.glass + '" fill="#11151c" opacity="0.82"/><ellipse cx="210" cy="92" rx="150" ry="24" fill="#fff" opacity="0.12"/><ellipse cx="' + fl.x + '" cy="' + fl.y + '" rx="5" ry="4" fill="#fff7e0"/><rect x="' + (rl.x - 3) + '" y="' + (rl.y - 4) + '" width="5" height="8" rx="1.5" fill="#d24539"/>' + wheels + '</svg>';
 }
 
-let currentUser = null, myCars = [], exploreCars = [], exploreFilter = null, exploreOwnerFilter = null, exploreYearFilter = null, editingId = null, pickedVis = 'private', viewMode = 'photo', cameFrom = 'collection', showroomSource = 'collection';
+let currentUser = null, myCars = [], exploreCars = [], exploreFilter = null, exploreOwnerFilter = null, exploreYearFilter = null, collectionFilter = null, collectionYearFilter = null, editingId = null, pickedVis = 'private', viewMode = 'photo', cameFrom = 'collection', showroomSource = 'collection';
 let showroomFilterType = null, showroomFilterOwner = null, showroomFilterYear = null, selectedShowroomCarId = null, showroomCars = [];
 function currentName() { if (!currentUser) return 'You'; const m = currentUser.user_metadata || {}; return m.display_name || m.full_name || m.name || (currentUser.email || 'You').split('@')[0]; }
 function isManager() { if (!currentUser) return false; const m = currentUser.user_metadata || {}; const hay = [m.display_name, m.full_name, m.name, currentUser.email].filter(Boolean).join(' ').toLowerCase(); return hay.indexOf('manager') !== -1; }
@@ -600,7 +612,16 @@ async function submitAuth() {
     }
   } catch (e) { err.textContent = 'Could not reach the server. Check your connection.'; btn.textContent = label; }
 }
-async function signOut() { try { await sb.auth.signOut(); } catch (e) {} currentUser = null; myCars = []; showView('login'); setAuthTab('login'); }
+async function signOut() {
+  try { await sb.auth.signOut(); } catch (e) {}
+  currentUser = null;
+  myCars = [];
+  document.getElementById('userName').textContent = '—';
+  const expUser = document.getElementById('exploreUserName');
+  if (expUser) expUser.textContent = '—';
+  showView('login');
+  setAuthTab('login');
+}
 async function signInWithGoogle() {
   const err = document.getElementById('authErr'); err.className = 'err'; err.textContent = '';
   if (location.protocol === 'file:') {
@@ -613,22 +634,107 @@ async function signInWithGoogle() {
 }
 
 /* ===== Collection ===== */
-async function enterApp() { document.getElementById('userName').textContent = currentName(); goCollection(); await loadMyCars(); }
+async function enterApp() {
+  const name = currentName();
+  document.getElementById('userName').textContent = name;
+  const expUser = document.getElementById('exploreUserName');
+  if (expUser) expUser.textContent = name;
+  goCollection();
+  await loadMyCars();
+}
 function goCollection() { showView('collection'); }
 async function loadMyCars() {
   const g = document.getElementById('grid'); g.innerHTML = '<div class="loading">Opening your collection…</div>';
   const { data, error } = await sb.from('cars').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: true });
   if (error) { g.innerHTML = '<div class="empty"><h3>Couldn\'t load your cars</h3><p>' + esc(error.message) + '</p></div>'; return; }
-  myCars = data || []; renderCollection();
+  myCars = data || [];
+  collectionFilter = null;
+  collectionYearFilter = null;
+
+  // Populate My Garage selects
+  const typeSel = document.getElementById('col-type');
+  if (typeSel) {
+    typeSel.innerHTML = '<option value="">All Types</option>';
+    const seen = new Set();
+    myCars.forEach(c => {
+      if (c.body && !seen.has(c.body)) {
+        seen.add(c.body);
+        const opt = document.createElement('option');
+        opt.value = c.body;
+        opt.textContent = typeLabel(c.body);
+        typeSel.appendChild(opt);
+      }
+    });
+  }
+
+  const yearSel = document.getElementById('col-year');
+  if (yearSel) {
+    yearSel.innerHTML = '<option value="">All Years</option>';
+    const seen = new Set();
+    myCars.forEach(c => {
+      if (c.year) seen.add(c.year);
+    });
+    const sortedYears = Array.from(seen).sort((a, b) => parseInt(a) - parseInt(b));
+    sortedYears.forEach(y => {
+      const opt = document.createElement('option');
+      opt.value = y;
+      opt.textContent = y;
+      yearSel.appendChild(opt);
+    });
+  }
+
+  renderCollection();
 }
 function ownership(c) { return c.owned_to ? 'Past' : 'Current'; }
+function filterCollection(type) {
+  collectionFilter = type || null;
+  const typeSel = document.getElementById('col-type');
+  if (typeSel) { typeSel.value = collectionFilter || ''; }
+  renderCollection();
+}
+function filterCollectionYear(year) {
+  collectionYearFilter = year ? String(year) : null;
+  const yearSel = document.getElementById('col-year');
+  if (yearSel) { yearSel.value = collectionYearFilter || ''; }
+  renderCollection();
+}
+function clearCollectionFilters() {
+  collectionFilter = null;
+  collectionYearFilter = null;
+  const typeSel = document.getElementById('col-type');
+  const yearSel = document.getElementById('col-year');
+  if (typeSel) { typeSel.value = ''; }
+  if (yearSel) { yearSel.value = ''; }
+  renderCollection();
+}
 function renderCollection() {
   const g = document.getElementById('grid');
-  if (!myCars.length) {
-    g.innerHTML = '<div class="empty"><svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 21V9l9-6 9 6v12z"/><path d="M9 21v-7h6v7"/></svg><h3>Your garage is empty</h3><p>Start your journey by adding your first car.</p></div>';
+  let list = myCars;
+  if (collectionFilter) {
+    list = list.filter(c => c.body === collectionFilter);
+  }
+  if (collectionYearFilter) {
+    list = list.filter(c => String(c.year) === collectionYearFilter);
+  }
+
+  let bar = '';
+  const hasFilters = collectionFilter || collectionYearFilter;
+  if (hasFilters) {
+    let chipsHtml = '';
+    if (collectionFilter) {
+      chipsHtml += '<span class="filter-chip">Type: ' + typeLabel(collectionFilter) + ' <button onclick="filterCollection(\'\')">&times;</button></span>';
+    }
+    if (collectionYearFilter) {
+      chipsHtml += '<span class="filter-chip">Year: ' + collectionYearFilter + ' <button onclick="filterCollectionYear(\'\')">&times;</button></span>';
+    }
+    bar = '<div class="filterbar">Active: ' + chipsHtml + ' <button class="clear-all-filters" onclick="clearCollectionFilters()">Clear all</button></div>';
+  }
+
+  if (!list.length) {
+    g.innerHTML = bar + '<div class="empty"><h3>Nothing to show</h3><p>No cars match the active filters.</p></div>';
     return;
   }
-  g.innerHTML = myCars.map(c => vcard(c, true)).join('');
+  g.innerHTML = bar + list.map(c => vcard(c, true)).join('');
 }
 function vcard(c, own) {
   const r = resolveColor(c.color_name);
@@ -643,15 +749,24 @@ function vcard(c, own) {
   const mgr = isManager()
     ? '<div class="mgr' + (own ? ' own' : '') + '">' + (own ? '' : '<button class="mtag del" onclick="event.stopPropagation(); managerDelete(\'' + c.id + '\')">Delete</button>') + '<button class="mtag ref" onclick="event.stopPropagation(); refreshPhotos(\'' + c.id + '\')">Refresh</button></div>'
     : '';
-  const yrStyle = 'cursor:pointer; padding:2px 6px; border-radius:4px; font-weight:600; font-size:11px; transition:all 0.15s; ' + (exploreYearFilter === c.year ? 'background:var(--blue); color:#fff;' : 'background:var(--field); color:var(--muted);');
-  const yrHtml = own ? esc(c.year || '—') : '<span style="' + yrStyle + '" onclick="event.stopPropagation(); filterExploreYear(\'' + esc(c.year || '') + '\')">' + esc(c.year || '—') + '</span>';
+  const isYrActive = own ? (collectionYearFilter === String(c.year)) : (exploreYearFilter === String(c.year));
+  const yrStyle = 'cursor:pointer; padding:2px 6px; border-radius:4px; font-weight:600; font-size:11px; transition:all 0.15s; ' + (isYrActive ? 'background:var(--blue); color:#fff;' : 'background:var(--field); color:var(--muted);');
+  const yrHtml = own
+    ? '<span style="' + yrStyle + '" onclick="event.stopPropagation(); filterCollectionYear(\'' + esc(c.year || '') + '\')">' + esc(c.year || '—') + '</span>'
+    : '<span style="' + yrStyle + '" onclick="event.stopPropagation(); filterExploreYear(\'' + esc(c.year || '') + '\')">' + esc(c.year || '—') + '</span>';
+  
+  const isTypeActive = own ? (collectionFilter === c.body) : (exploreFilter === c.body);
+  const typeHtml = own
+    ? '<div class="vtype clickable' + (isTypeActive ? ' active' : '') + '" title="Show only ' + typeLabel(c.body) + '" onclick="event.stopPropagation(); filterCollection(\'' + c.body + '\')">' + typeLabel(c.body) + '</div>'
+    : '<div class="vtype clickable' + (isTypeActive ? ' active' : '') + '" title="Show only ' + typeLabel(c.body) + '" onclick="event.stopPropagation(); filterExplore(\'' + c.body + '\')">' + typeLabel(c.body) + '</div>';
+
   return '<div class="vcard">' +
     '<div class="vphoto" onclick="openDetail(\'' + c.id + '\')" style="cursor:pointer">' + visBadge + topRight + mgr +
     '<img class="car-photo" id="ph-' + c.id + '" src="' + carPhotoUrl(c, '23') + '" alt="' + esc(c.make + ' ' + c.model) + '" loading="lazy" onerror="this.classList.add(\'failed\')" />' +
     '<div class="illus">' + carSVG(c.body, hex, c.id) + '</div>' +
     '<div class="angles">' + THUMB_ANGLES.map(function (a) { return '<img class="thumb" src="' + carPhotoUrl(c, a) + '" loading="lazy" onclick="event.stopPropagation(); swapPhoto(\'' + c.id + '\', this.src)" onerror="this.remove()" />'; }).join('') + '</div></div>' +
     '<div class="vbody" onclick="openDetail(\'' + c.id + '\')" style="cursor:pointer">' +
-    '<div class="vtop"><div class="vname">' + esc(c.make) + ' ' + esc(c.model) + '</div>' + (own ? '<div class="vtype">' + typeLabel(c.body) + '</div>' : '<div class="vtype clickable' + (exploreFilter === c.body ? ' active' : '') + '" title="Show only ' + typeLabel(c.body) + '" onclick="event.stopPropagation(); filterExplore(\'' + c.body + '\')">' + typeLabel(c.body) + '</div>') + '</div>' +
+    '<div class="vtop"><div class="vname">' + esc(c.make) + ' ' + esc(c.model) + '</div>' + typeHtml + '</div>' +
     '<div class="vsub">' + yrHtml + ' &bull; ' + esc(c.color_name || '') + '</div>' +
     '<div class="vdata"><div><div class="k">Bought</div><div class="v">' + esc(c.owned_from || '—') + '</div></div>' +
     '<div><div class="k">Sold</div><div class="v">' + sold + '</div></div>' +
